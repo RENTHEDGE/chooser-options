@@ -10,12 +10,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left:'$$',right:'$$',display:true},
+        {left:'\\\\[',right:'\\\\]',display:true},
+        {left:'$',right:'$',display:false},
+        {left:'\\\\(',right:'\\\\)',display:false}
+      ],
+      throwOnError: false
+    })"></script>
+
   <style>
     /* ============================================================
        DESIGN TOKENS
        ============================================================ */
     :root {
-      /* Surfaces */
       --bg:           #0b0d11;
       --bg-deep:      #080a0e;
       --surface:      #11141a;
@@ -24,33 +37,29 @@
       --border:       rgba(255,255,255,0.07);
       --border-strong:rgba(255,255,255,0.13);
 
-      /* Text */
       --text:         #e8eaf0;
       --text-muted:   #7a8499;
       --text-faint:   #3d4557;
 
-      /* Accents */
-      --green:        #00e5a0;   /* primary — confirmation, gain */
-      --green-dim:    rgba(0,229,160,0.12);
-      --amber:        #f5c842;   /* secondary — strike, attention */
-      --amber-dim:    rgba(245,200,66,0.12);
-      --red:          #ff5f6d;   /* loss, vencimiento */
-      --red-dim:      rgba(255,95,109,0.12);
-      --blue:         #4a9eff;   /* neutral data */
-      --blue-dim:     rgba(74,158,255,0.12);
+      --green:        #00e5a0;
+      --green-dim:    rgba(0,229,160,0.10);
+      --amber:        #f5c842;
+      --amber-dim:    rgba(245,200,66,0.10);
+      --red:          #ff5f6d;
+      --red-dim:      rgba(255,95,109,0.10);
+      --blue:         #4a9eff;
+      --blue-dim:     rgba(74,158,255,0.10);
+      --purple:       #b87dff;
+      --purple-dim:   rgba(184,125,255,0.10);
 
-      /* Typography */
       --font-display: 'DM Serif Display', Georgia, serif;
       --font-body:    'DM Sans', system-ui, sans-serif;
       --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
 
-      /* Layout */
       --sidebar-w:    220px;
       --header-h:     52px;
       --radius:       8px;
       --radius-lg:    14px;
-
-      /* Transitions */
       --ease:         cubic-bezier(0.16, 1, 0.3, 1);
       --t-fast:       160ms;
       --t-base:       280ms;
@@ -69,25 +78,29 @@
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
-    ::selection { background: rgba(0,229,160,0.25); color: var(--text); }
+    ::selection { background: rgba(0,229,160,0.22); color: var(--text); }
     :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; border-radius: 4px; }
 
-    /* ============================================================
-       SCROLLBAR
-       ============================================================ */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg-deep); }
     ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 99px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
 
     /* ============================================================
-       TOP HEADER BAR
+       KaTeX overrides — hereda fuente y color del sistema
+       ============================================================ */
+    .katex { font-size: 1em; color: var(--text); }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+    .katex-display > .katex { white-space: normal; }
+
+    /* ============================================================
+       TOP HEADER
        ============================================================ */
     .header {
       position: fixed;
       top: 0; left: 0; right: 0;
       height: var(--header-h);
-      background: rgba(8,10,14,0.85);
+      background: rgba(8,10,14,0.88);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
@@ -97,13 +110,7 @@
       padding: 0 28px;
       z-index: 100;
     }
-
-    .header-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .header-brand { display: flex; align-items: center; gap: 10px; }
     .header-logo {
       width: 28px; height: 28px;
       border-radius: 6px;
@@ -115,134 +122,77 @@
       letter-spacing: -0.5px;
       flex-shrink: 0;
     }
-
     .header-title {
       font-family: var(--font-mono);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
-      letter-spacing: 0.02em;
+      font-size: 13px; font-weight: 500;
+      color: var(--text); letter-spacing: 0.02em;
     }
-
-    .header-title span {
-      color: var(--green);
-    }
-
-    .header-meta {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
+    .header-title span { color: var(--green); }
+    .header-meta { display: flex; align-items: center; gap: 20px; }
     .header-tag {
       font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-muted);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-size: 11px; color: var(--text-muted);
+      letter-spacing: 0.08em; text-transform: uppercase;
     }
-
     .status-dot {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--green);
+      display: flex; align-items: center; gap: 6px;
+      font-family: var(--font-mono); font-size: 11px; color: var(--green);
     }
-
     .status-dot::before {
-      content: '';
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 8px var(--green);
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 8px var(--green);
       animation: pulse-dot 2s ease-in-out infinite;
     }
-
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
     /* ============================================================
-       SIDEBAR NAVIGATION
+       SIDEBAR
        ============================================================ */
     .sidebar {
       position: fixed;
-      top: var(--header-h);
-      left: 0;
+      top: var(--header-h); left: 0;
       width: var(--sidebar-w);
       height: calc(100vh - var(--header-h));
       background: var(--bg-deep);
       border-right: 1px solid var(--border);
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow-y: auto; overflow-x: hidden;
       padding: 24px 0 40px;
       z-index: 90;
     }
-
     .sidebar-section-label {
       font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--text-faint);
-      padding: 0 20px 8px;
-      margin-top: 20px;
+      padding: 0 20px 8px; margin-top: 20px;
     }
-
     .sidebar-section-label:first-child { margin-top: 0; }
-
     .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      display: flex; align-items: center; gap: 8px;
       padding: 8px 20px;
-      font-size: 13px;
-      color: var(--text-muted);
-      text-decoration: none;
-      cursor: pointer;
+      font-size: 13px; color: var(--text-muted);
+      text-decoration: none; cursor: pointer;
       border-left: 2px solid transparent;
       transition: color var(--t-fast) var(--ease),
                   background var(--t-fast) var(--ease),
                   border-color var(--t-fast) var(--ease);
-      position: relative;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-
-    .nav-item:hover {
-      color: var(--text);
-      background: rgba(255,255,255,0.03);
-    }
-
-    .nav-item.active {
-      color: var(--green);
-      border-left-color: var(--green);
-      background: var(--green-dim);
-    }
-
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+    .nav-item.active { color: var(--green); border-left-color: var(--green); background: var(--green-dim); }
     .nav-item .nav-icon {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-faint);
-      flex-shrink: 0;
-      min-width: 18px;
+      font-family: var(--font-mono); font-size: 11px;
+      color: var(--text-faint); flex-shrink: 0; min-width: 18px;
     }
-
     .nav-item.active .nav-icon { color: var(--green); }
 
     /* ============================================================
-       MAIN CONTENT AREA
+       MAIN AREA
        ============================================================ */
     .main {
       margin-left: var(--sidebar-w);
       margin-top: var(--header-h);
       min-height: calc(100vh - var(--header-h));
-      padding: 0;
     }
 
     /* ============================================================
@@ -250,57 +200,35 @@
        ============================================================ */
     .section {
       min-height: 100vh;
-      padding: 64px 60px 80px;
+      padding: 72px 64px 88px;
       border-bottom: 1px solid var(--border);
       position: relative;
     }
-
     .section:last-child { border-bottom: none; }
 
-    /* Section intro label */
     .section-label {
       font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
     }
-
     .section-label::before {
-      content: '';
-      display: inline-block;
+      content: ''; display: inline-block;
       width: 20px; height: 1px;
-      background: var(--green);
-      opacity: 0.6;
+      background: var(--green); opacity: 0.6;
     }
-
-    /* Section headings */
     .section-title {
       font-family: var(--font-display);
       font-size: clamp(2rem, 3.5vw, 3rem);
-      font-weight: 400;
-      line-height: 1.1;
-      color: var(--text);
-      margin-bottom: 16px;
+      font-weight: 400; line-height: 1.1;
+      color: var(--text); margin-bottom: 16px;
       letter-spacing: -0.02em;
     }
-
-    .section-title em {
-      font-style: italic;
-      color: var(--green);
-    }
-
+    .section-title em { font-style: italic; color: var(--green); }
     .section-subtitle {
-      font-size: 15px;
-      color: var(--text-muted);
-      max-width: 640px;
-      line-height: 1.65;
-      margin-bottom: 48px;
+      font-size: 15px; color: var(--text-muted);
+      max-width: 680px; line-height: 1.7; margin-bottom: 52px;
     }
 
     /* ============================================================
@@ -314,397 +242,455 @@
       transition: border-color var(--t-base) var(--ease),
                   box-shadow var(--t-base) var(--ease);
     }
-
     .card:hover {
       border-color: var(--border-strong);
-      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 28px rgba(0,0,0,0.35);
     }
-
     .card-label {
       font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-faint);
-      margin-bottom: 10px;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-faint); margin-bottom: 10px;
     }
-
     .card-value {
       font-family: var(--font-mono);
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
-      margin-bottom: 4px;
+      font-size: 2rem; font-weight: 700;
+      color: var(--text); line-height: 1; margin-bottom: 4px;
     }
-
     .card-value.green { color: var(--green); text-shadow: 0 0 20px rgba(0,229,160,0.4); }
     .card-value.amber { color: var(--amber); text-shadow: 0 0 20px rgba(245,200,66,0.3); }
-    .card-value.red   { color: var(--red);   text-shadow: 0 0 20px rgba(255,95,109,0.3); }
-
-    .card-desc {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
+    .card-value.blue  { color: var(--blue);  text-shadow: 0 0 20px rgba(74,158,255,0.3); }
+    .card-desc { font-size: 12px; color: var(--text-muted); }
 
     /* ============================================================
        GRID HELPERS
        ============================================================ */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
 
     /* ============================================================
-       HERO SECTION (#intro)
+       HERO SECTION
        ============================================================ */
     #intro {
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 80px 60px;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 80px 64px;
       background:
         radial-gradient(ellipse 60% 50% at 80% 50%, rgba(0,229,160,0.04) 0%, transparent 60%),
         radial-gradient(ellipse 40% 40% at 10% 80%, rgba(74,158,255,0.04) 0%, transparent 55%),
         var(--bg);
       overflow: hidden;
     }
-
     .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--green);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 11px;
+      color: var(--green); letter-spacing: 0.12em; text-transform: uppercase;
       background: var(--green-dim);
       border: 1px solid rgba(0,229,160,0.2);
-      border-radius: 99px;
-      padding: 5px 14px;
-      margin-bottom: 28px;
-      width: fit-content;
+      border-radius: 99px; padding: 5px 14px;
+      margin-bottom: 28px; width: fit-content;
     }
-
     .hero-heading {
       font-family: var(--font-display);
       font-size: clamp(2.8rem, 5.5vw, 5rem);
-      font-weight: 400;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      max-width: 760px;
-      margin-bottom: 24px;
+      font-weight: 400; line-height: 1.05;
+      letter-spacing: -0.03em; color: var(--text);
+      max-width: 760px; margin-bottom: 24px;
     }
-
     .hero-heading em {
       font-style: italic;
       background: linear-gradient(90deg, var(--green), var(--blue));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
     .hero-sub {
-      font-size: 16px;
-      color: var(--text-muted);
-      max-width: 580px;
-      line-height: 1.7;
-      margin-bottom: 48px;
+      font-size: 16px; color: var(--text-muted);
+      max-width: 580px; line-height: 1.7; margin-bottom: 48px;
     }
-
-    .hero-kpis {
-      display: flex;
-      gap: 32px;
-      flex-wrap: wrap;
-    }
-
-    .hero-kpi {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
+    .hero-kpis { display: flex; gap: 32px; flex-wrap: wrap; }
+    .hero-kpi { display: flex; flex-direction: column; gap: 4px; }
     .hero-kpi-val {
-      font-family: var(--font-mono);
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
+      font-family: var(--font-mono); font-size: 1.6rem;
+      font-weight: 700; color: var(--text); line-height: 1;
     }
-
     .hero-kpi-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      font-size: 11px; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.08em;
     }
-
-    .hero-kpi-divider {
-      width: 1px;
-      background: var(--border-strong);
-      align-self: stretch;
-    }
-
-    /* ============================================================
-       DECORATIVE GRID LINES (hero bg)
-       ============================================================ */
+    .hero-kpi-divider { width: 1px; background: var(--border-strong); align-self: stretch; }
     .grid-lines {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.025;
+      position: absolute; inset: 0; pointer-events: none; opacity: 0.025;
       background-image:
         linear-gradient(to right, var(--text) 1px, transparent 1px),
         linear-gradient(to bottom, var(--text) 1px, transparent 1px);
-      background-size: 60px 60px;
-      z-index: 0;
+      background-size: 60px 60px; z-index: 0;
     }
-
     #intro > * { position: relative; z-index: 1; }
     #intro > .grid-lines { z-index: 0; }
 
     /* ============================================================
-       FORMULA BLOCK
+       DEFINITION SECTION — callout + prose block
+       ============================================================ */
+    .def-callout {
+      background: linear-gradient(135deg, rgba(0,229,160,0.06) 0%, rgba(74,158,255,0.04) 100%);
+      border: 1px solid rgba(0,229,160,0.18);
+      border-radius: var(--radius-lg);
+      padding: 36px 40px;
+      margin-bottom: 40px;
+    }
+    .def-callout-label {
+      font-family: var(--font-mono);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 14px;
+    }
+    .def-callout-text {
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+      font-weight: 400; line-height: 1.65;
+      color: var(--text);
+      font-style: italic;
+    }
+    .def-callout-text strong { font-style: normal; color: var(--green); }
+
+    .prose {
+      font-size: 14.5px; color: var(--text-muted);
+      line-height: 1.75; max-width: 780px;
+    }
+    .prose p + p { margin-top: 16px; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--amber); font-style: italic; }
+    .prose code {
+      font-family: var(--font-mono);
+      font-size: 12.5px; color: var(--green);
+      background: var(--green-dim);
+      padding: 1px 6px; border-radius: 4px;
+    }
+
+    /* ============================================================
+       INTUITION — timeline horizontal de estados
+       ============================================================ */
+    .intuition-timeline {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 0;
+      margin: 44px 0 52px;
+    }
+    .int-node {
+      background: var(--surface-2);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 24px 20px;
+      text-align: center;
+      position: relative;
+      transition: border-color var(--t-base) var(--ease),
+                  box-shadow var(--t-base) var(--ease);
+    }
+    .int-node:hover {
+      box-shadow: 0 0 0 1px var(--border-strong), 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .int-node.node-green { border-color: rgba(0,229,160,0.25); }
+    .int-node.node-amber { border-color: rgba(245,200,66,0.25); }
+    .int-node.node-split {
+      border-color: rgba(74,158,255,0.25);
+      background: linear-gradient(135deg, rgba(0,229,160,0.05), rgba(74,158,255,0.05));
+    }
+    .int-node-badge {
+      font-family: var(--font-mono);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 99px;
+      margin-bottom: 10px; display: inline-block;
+    }
+    .badge-green { background: var(--green-dim); color: var(--green); }
+    .badge-amber { background: var(--amber-dim); color: var(--amber); }
+    .badge-blue  { background: var(--blue-dim);  color: var(--blue); }
+    .int-node-title {
+      font-family: var(--font-mono); font-size: 14px; font-weight: 700;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .int-node-desc {
+      font-size: 12px; color: var(--text-muted); line-height: 1.5;
+    }
+    .int-arrow {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 12px;
+    }
+    .int-arrow-line {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .int-arrow-track {
+      width: 60px; height: 1px;
+      background: linear-gradient(90deg, var(--border-strong), var(--text-faint));
+      position: relative;
+    }
+    .int-arrow-track::after {
+      content: '▸'; position: absolute;
+      right: -8px; top: -7px;
+      font-size: 9px; color: var(--text-faint);
+    }
+    .int-arrow-label {
+      font-family: var(--font-mono);
+      font-size: 10px; color: var(--text-faint);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .int-split-row {
+      display: flex; flex-direction: column; gap: 8px; margin-top: 10px;
+    }
+    .int-split-item {
+      font-size: 11.5px; color: var(--text-muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .int-split-item .dot {
+      width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    /* ============================================================
+       TAXONOMY — tarjetas plain vs complex
+       ============================================================ */
+    .tax-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .tax-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color var(--t-base) var(--ease),
+                  box-shadow var(--t-base) var(--ease);
+    }
+    .tax-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .tax-card.plain::before { background: linear-gradient(90deg, var(--green), var(--blue)); }
+    .tax-card.complex::before { background: linear-gradient(90deg, var(--amber), var(--purple)); }
+    .tax-card:hover { border-color: var(--border-strong); box-shadow: 0 6px 32px rgba(0,0,0,0.4); }
+    .tax-type {
+      font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .tax-type.plain { color: var(--green); }
+    .tax-type.complex { color: var(--amber); }
+    .tax-card h3 {
+      font-family: var(--font-display); font-size: 1.4rem;
+      font-weight: 400; color: var(--text);
+      margin-bottom: 14px; line-height: 1.2;
+    }
+    .tax-card p {
+      font-size: 13.5px; color: var(--text-muted);
+      line-height: 1.7; margin-bottom: 20px;
+    }
+    .tax-attr-list {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .tax-attr-list li {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 13px; color: var(--text-muted); line-height: 1.5;
+    }
+    .tax-attr-list li::before {
+      content: '—'; font-family: var(--font-mono);
+      font-size: 11px; flex-shrink: 0; margin-top: 1px;
+    }
+    .tax-card.plain .tax-attr-list li::before { color: var(--green); }
+    .tax-card.complex .tax-attr-list li::before { color: var(--amber); }
+    .tax-attr-list li strong { color: var(--text); font-weight: 600; }
+
+    .tax-compare-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13px; margin-top: 8px;
+    }
+    .tax-compare-table th {
+      font-family: var(--font-mono); font-size: 10px;
+      font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-faint); text-align: left;
+      padding: 10px 16px; border-bottom: 1px solid var(--border-strong);
+    }
+    .tax-compare-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted); vertical-align: top; line-height: 1.5;
+    }
+    .tax-compare-table tr:last-child td { border-bottom: none; }
+    .tax-compare-table tr:hover td { background: rgba(255,255,255,0.02); color: var(--text); }
+    .tax-compare-table td.col-attr { color: var(--text); font-weight: 600; width: 200px; }
+    .tax-compare-table td.col-plain { color: var(--green); font-family: var(--font-mono); font-size: 12px; }
+    .tax-compare-table td.col-complex { color: var(--amber); font-family: var(--font-mono); font-size: 12px; }
+
+    /* ============================================================
+       FORMULA SECTION — Rubinstein
        ============================================================ */
     .formula-block {
       background: var(--surface-2);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 28px 32px;
-      font-family: var(--font-mono);
-      font-size: 14px;
-      color: var(--text-muted);
+      padding: 36px 40px;
+      margin-bottom: 28px;
       overflow-x: auto;
     }
-
-    .formula-block .formula-title {
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-faint);
-      margin-bottom: 14px;
+    .formula-block-title {
+      font-family: var(--font-mono);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-faint); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 8px;
     }
-
-    .formula-block .formula-eq {
-      font-size: 15px;
-      color: var(--text);
-      line-height: 2;
+    .formula-block-title::after {
+      content: ''; flex: 1; height: 1px; background: var(--border-strong);
     }
+    .formula-block .katex-display {
+      margin: 14px 0;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .formula-block .katex-display:last-child { border-bottom: none; margin-bottom: 0; }
 
-    .formula-block .formula-eq .hl-green { color: var(--green); }
-    .formula-block .formula-eq .hl-amber { color: var(--amber); }
-    .formula-block .formula-eq .hl-blue  { color: var(--blue); }
-    .formula-block .formula-eq .hl-red   { color: var(--red); }
-
-    .formula-params {
-      margin-top: 18px;
+    .formula-params-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 10px;
+      margin-top: 24px;
     }
-
-    .formula-param {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-      padding: 8px 12px;
+    .fparam {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 10px 14px;
       background: var(--surface);
       border-radius: var(--radius);
       border: 1px solid var(--border);
+      transition: border-color var(--t-fast) var(--ease);
     }
-
-    .formula-param .sym {
+    .fparam:hover { border-color: var(--border-strong); }
+    .fparam .sym {
       font-family: var(--font-mono);
-      font-size: 13px;
-      font-weight: 600;
-      min-width: 26px;
-      color: var(--amber);
+      font-size: 13px; font-weight: 700;
+      min-width: 28px; flex-shrink: 0; margin-top: 1px;
     }
-
-    .formula-param .def {
+    .fparam .def {
       font-family: var(--font-body);
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.4;
+      font-size: 12.5px; color: var(--text-muted); line-height: 1.45;
     }
+    .fparam .def strong { color: var(--text); font-weight: 600; }
 
-    /* ============================================================
-       TIMELINE (plain vs complex)
-       ============================================================ */
-    .timeline {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
+    /* derivación — pasos step by step */
+    .derivation-steps {
+      display: flex; flex-direction: column; gap: 0;
+      margin: 36px 0;
     }
-
-    .timeline-track {
-      position: absolute;
-      left: 20px;
-      top: 24px;
-      bottom: 24px;
-      width: 2px;
-      background: linear-gradient(to bottom, var(--green), var(--blue));
-      opacity: 0.3;
-    }
-
-    .timeline-item {
-      display: flex;
-      gap: 24px;
-      align-items: flex-start;
-      padding: 16px 0 16px 56px;
-      position: relative;
-    }
-
-    .timeline-dot {
-      position: absolute;
-      left: 12px;
-      top: 20px;
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      border: 2px solid var(--green);
-      background: var(--bg);
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    .timeline-dot::after {
-      content: '';
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--green);
-    }
-
-    .timeline-dot.amber { border-color: var(--amber); }
-    .timeline-dot.amber::after { background: var(--amber); }
-
-    .timeline-content {}
-
-    .timeline-label {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-faint);
-      margin-bottom: 4px;
-    }
-
-    .timeline-heading {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-
-    .timeline-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.6;
-      max-width: 540px;
-    }
-
-    /* ============================================================
-       COMPARISON TABLE
-       ============================================================ */
-    .compare-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    .compare-table th {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-faint);
-      text-align: left;
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--border-strong);
-    }
-
-    .compare-table td {
-      padding: 12px 16px;
+    .deriv-step {
+      display: flex; gap: 24px; align-items: flex-start;
+      padding: 20px 0 20px 0;
       border-bottom: 1px solid var(--border);
-      color: var(--text-muted);
-      vertical-align: top;
-      line-height: 1.5;
+      position: relative;
     }
-
-    .compare-table tr:last-child td { border-bottom: none; }
-
-    .compare-table tr:hover td {
-      background: rgba(255,255,255,0.02);
-      color: var(--text);
+    .deriv-step:last-child { border-bottom: none; }
+    .deriv-num {
+      font-family: var(--font-mono);
+      font-size: 11px; font-weight: 700;
+      color: var(--text-faint);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
     }
+    .deriv-body { flex: 1; }
+    .deriv-title {
+      font-size: 13.5px; font-weight: 600; color: var(--text);
+      margin-bottom: 6px; line-height: 1.3;
+    }
+    .deriv-desc {
+      font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 10px;
+    }
+    .deriv-tag {
+      display: inline-block;
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 4px;
+      margin-bottom: 12px;
+    }
+    .tag-green { background: var(--green-dim); color: var(--green); }
+    .tag-amber { background: var(--amber-dim); color: var(--amber); }
+    .tag-blue  { background: var(--blue-dim);  color: var(--blue); }
+    .tag-purple{ background: var(--purple-dim);color: var(--purple); }
 
-    .compare-table td.highlight-green { color: var(--green); font-weight: 600; font-family: var(--font-mono); }
-    .compare-table td.highlight-amber { color: var(--amber); font-weight: 600; }
-    .compare-table td.label-col { color: var(--text); font-weight: 600; }
+    /* insight box */
+    .insight-box {
+      background: var(--surface-2);
+      border-left: 3px solid var(--green);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 18px 22px;
+      margin: 28px 0;
+    }
+    .insight-box.amber { border-left-color: var(--amber); }
+    .insight-box.blue  { border-left-color: var(--blue); }
+    .insight-label {
+      font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 8px;
+    }
+    .insight-box.amber .insight-label { color: var(--amber); }
+    .insight-box.blue  .insight-label { color: var(--blue); }
+    .insight-text {
+      font-size: 13.5px; color: var(--text-muted); line-height: 1.65;
+    }
+    .insight-text strong { color: var(--text); }
+    .insight-text code {
+      font-family: var(--font-mono); font-size: 12px; color: var(--green);
+      background: var(--green-dim); padding: 1px 6px; border-radius: 4px;
+    }
 
     /* ============================================================
-       PLACEHOLDER PANELS (for Pasos 2-5)
+       PLACEHOLDERS — secciones futuras
        ============================================================ */
     .placeholder {
       border: 1px dashed var(--border-strong);
       border-radius: var(--radius-lg);
-      padding: 60px;
-      text-align: center;
-      color: var(--text-faint);
+      padding: 60px; text-align: center; color: var(--text-faint);
     }
-
-    .placeholder .ph-icon {
-      font-size: 2.5rem;
-      margin-bottom: 12px;
-      opacity: 0.4;
-    }
-
+    .placeholder .ph-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
     .placeholder .ph-label {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-family: var(--font-mono); font-size: 12px;
+      letter-spacing: 0.1em; text-transform: uppercase;
     }
 
     /* ============================================================
-       SCROLLSPY — active nav highlight
-       ============================================================ */
-    /* handled via JS IntersectionObserver below */
-
-    /* ============================================================
-       RESPONSIVE (grabación en desktop — mínimo mobile handling)
+       RESPONSIVE
        ============================================================ */
     @media (max-width: 900px) {
       :root { --sidebar-w: 0px; }
       .sidebar { display: none; }
       .section { padding: 48px 24px 60px; }
       #intro { padding: 60px 24px; }
+      .tax-grid { grid-template-columns: 1fr; }
+      .intuition-timeline { grid-template-columns: 1fr; }
+      .int-arrow { display: none; }
     }
 
     /* ============================================================
-       FADE-IN ANIMATION (secciones al entrar en viewport)
+       FADE-UP
        ============================================================ */
     .fade-up {
-      opacity: 0;
-      transform: translateY(24px);
+      opacity: 0; transform: translateY(24px);
       transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
     }
-
-    .fade-up.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
 
-  <!-- ============================================================
-       TOP HEADER
-       ============================================================ -->
+  <!-- TOP HEADER -->
   <header class="header">
     <div class="header-brand">
       <div class="header-logo">CO</div>
@@ -716,81 +702,74 @@
     </div>
   </header>
 
-  <!-- ============================================================
-       SIDEBAR
-       ============================================================ -->
+  <!-- SIDEBAR -->
   <nav class="sidebar" role="navigation" aria-label="Secciones">
-
     <div class="sidebar-section-label">Fundamentos</div>
-    <a class="nav-item active" href="#intro" onclick="smoothNav(event, 'intro')">
+    <a class="nav-item active" href="#intro" onclick="smoothNav(event,'intro')">
       <span class="nav-icon">01</span> Introducción
     </a>
-    <a class="nav-item" href="#definition" onclick="smoothNav(event, 'definition')">
+    <a class="nav-item" href="#definition" onclick="smoothNav(event,'definition')">
       <span class="nav-icon">02</span> Definición
     </a>
-    <a class="nav-item" href="#taxonomy" onclick="smoothNav(event, 'taxonomy')">
-      <span class="nav-icon">03</span> Taxonomía
+    <a class="nav-item" href="#intuition" onclick="smoothNav(event,'intuition')">
+      <span class="nav-icon">03</span> Intuición
     </a>
-    <a class="nav-item" href="#formula" onclick="smoothNav(event, 'formula')">
-      <span class="nav-icon">04</span> Estructura Matemática
+    <a class="nav-item" href="#taxonomy" onclick="smoothNav(event,'taxonomy')">
+      <span class="nav-icon">04</span> Taxonomía
+    </a>
+    <a class="nav-item" href="#formula" onclick="smoothNav(event,'formula')">
+      <span class="nav-icon">05</span> Fórmula de Rubinstein
     </a>
 
     <div class="sidebar-section-label">Herramienta</div>
-    <a class="nav-item" href="#simulator" onclick="smoothNav(event, 'simulator')">
-      <span class="nav-icon">05</span> Simulador
+    <a class="nav-item" href="#simulator" onclick="smoothNav(event,'simulator')">
+      <span class="nav-icon">06</span> Simulador
     </a>
-    <a class="nav-item" href="#comparison" onclick="smoothNav(event, 'comparison')">
-      <span class="nav-icon">06</span> Comparativa
+    <a class="nav-item" href="#comparison" onclick="smoothNav(event,'comparison')">
+      <span class="nav-icon">07</span> Comparativa
     </a>
 
     <div class="sidebar-section-label">Aplicación</div>
-    <a class="nav-item" href="#usecase" onclick="smoothNav(event, 'usecase')">
-      <span class="nav-icon">07</span> Caso de Uso
+    <a class="nav-item" href="#usecase" onclick="smoothNav(event,'usecase')">
+      <span class="nav-icon">08</span> Caso de Uso
     </a>
-    <a class="nav-item" href="#summary" onclick="smoothNav(event, 'summary')">
-      <span class="nav-icon">08</span> Síntesis
+    <a class="nav-item" href="#summary" onclick="smoothNav(event,'summary')">
+      <span class="nav-icon">09</span> Síntesis
     </a>
-
   </nav>
 
-  <!-- ============================================================
-       MAIN CONTENT
-       ============================================================ -->
+  <!-- MAIN -->
   <main class="main">
 
-    <!-- SECTION 01 — HERO / INTRO -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 01 — HERO
+         ══════════════════════════════════════════ -->
     <section class="section" id="intro">
       <div class="grid-lines"></div>
-
-      <div class="hero-eyebrow">
-        Derivatives Desk · Exotic Options
-      </div>
-
+      <div class="hero-eyebrow">Derivatives Desk · Exotic Options</div>
       <h1 class="hero-heading">
         La opción que todavía<br />no ha <em>elegido</em> qué ser.
       </h1>
-
       <p class="hero-sub">
         Una <strong>chooser option</strong> otorga al comprador el derecho de decidir,
-        en una fecha futura t<sub>c</sub>, si el contrato actúa como call o como put
+        en una fecha futura $t_c$, si el contrato actúa como call o como put
         sobre el mismo subyacente — antes de esa fecha, el instrumento existe en
         superposición: es ambas cosas a la vez.
       </p>
-
       <div class="hero-kpis">
         <div class="hero-kpi">
-          <span class="hero-kpi-val" style="color:var(--green); font-family:var(--font-mono);">t<sub style="font-size:0.7em">c</sub></span>
+          <span class="hero-kpi-val" style="color:var(--green);font-family:var(--font-mono);">$t_c$</span>
           <span class="hero-kpi-label">Fecha de elección</span>
         </div>
         <div class="hero-kpi-divider"></div>
         <div class="hero-kpi">
-          <span class="hero-kpi-val" style="color:var(--amber); font-family:var(--font-mono);">T</span>
+          <span class="hero-kpi-val" style="color:var(--amber);font-family:var(--font-mono);">$T$</span>
           <span class="hero-kpi-label">Vencimiento del contrato</span>
         </div>
         <div class="hero-kpi-divider"></div>
         <div class="hero-kpi">
-          <span class="hero-kpi-val" style="color:var(--blue); font-family:var(--font-mono);">max(C, P)</span>
-          <span class="hero-kpi-label">Payoff en t<sub>c</sub></span>
+          <span class="hero-kpi-val" style="color:var(--blue);font-family:var(--font-mono);">$\max(C,P)$</span>
+          <span class="hero-kpi-label">Payoff en $t_c$</span>
         </div>
         <div class="hero-kpi-divider"></div>
         <div class="hero-kpi">
@@ -800,42 +779,457 @@
       </div>
     </section>
 
-    <!-- SECTION 02 — DEFINICIÓN (placeholder, Paso 2) -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 02 — DEFINICIÓN
+         ══════════════════════════════════════════ -->
     <section class="section fade-up" id="definition">
-      <div class="section-label">Definición</div>
+      <div class="section-label">02 — Definición</div>
       <h2 class="section-title">¿Qué es una <em>chooser option</em>?</h2>
-      <p class="section-subtitle">Contenido detallado — Paso 2</p>
-      <div class="placeholder">
-        <div class="ph-icon">📋</div>
-        <div class="ph-label">Sección en construcción · Paso 2</div>
+      <p class="section-subtitle">
+        Un derivado exótico de segunda generación que encapsula el derecho a la identidad del contrato,
+        separando la decisión de dirección del momento de adquisición.
+      </p>
+
+      <div class="def-callout">
+        <div class="def-callout-label">Definición formal</div>
+        <p class="def-callout-text">
+          Una <strong>chooser option</strong> (opción electora) es un contrato derivado que otorga a su
+          comprador el derecho — pero no la obligación — de designar, en o antes de una fecha intermedia
+          $t_c$ (elección), si el instrumento será tratado como una <strong>call europea</strong> o como
+          una <strong>put europea</strong>, ambas con el mismo strike $K$ y vencimiento $T > t_c$.
+        </p>
+      </div>
+
+      <div class="prose">
+        <p>
+          A diferencia de un straddle, donde el inversor compra simultáneamente call y put,
+          la chooser option le vende <em>la optionalidad sobre la dirección</em> misma del instrumento.
+          El comprador adquiere hoy una sola prima, y retiene hasta $t_c$ la libertad de revelar
+          su expectativa de mercado.
+        </p>
+        <p>
+          El instrumento fue formalizado por <strong>Mark Rubinstein en 1991</strong> en el artículo
+          <em>"Pay Now, Choose Later"</em> (Risk Magazine), donde demostró que bajo el modelo
+          Black-Scholes puede replicarse como una cartera de opciones vainilla, lo que facilita
+          su pricing analítico.
+        </p>
+        <p>
+          El payoff bruto para el comprador al momento de elección $t_c$ es:
+        </p>
+      </div>
+
+      <div class="formula-block" style="margin: 24px 0 28px; max-width: 680px;">
+        <div class="formula-block-title">Payoff de elección en $t_c$</div>
+        $$V_{t_c} = \max\!\bigl(C(S_{t_c}, K, T-t_c),\; P(S_{t_c}, K, T-t_c)\bigr)$$
+      </div>
+
+      <div class="prose">
+        <p>
+          donde $C$ y $P$ son los valores Black-Scholes de la call y la put europeas respectivamente,
+          evaluadas en $t_c$ con el precio spot vigente $S_{t_c}$, strike $K$, y tiempo residual $T - t_c$.
+        </p>
+        <p>
+          Económicamente, la chooser puede verse como el derecho a <em>apostar sobre la magnitud
+          del movimiento sin comprometerse con la dirección</em>. Resulta especialmente atractiva
+          previo a eventos de alta incertidumbre: decisiones de política monetaria, resultados
+          corporativos, referéndums, o anuncios regulatorios.
+        </p>
+      </div>
+
+      <div class="insight-box" style="margin-top: 32px;">
+        <div class="insight-label">Insight clave</div>
+        <p class="insight-text">
+          La chooser es más barata que un straddle porque el comprador <strong>renuncia a una pierna</strong>
+          en $t_c$: solo conserva la opción más valiosa. El mercado le descuenta el valor de la pierna
+          abandonada. Esta asimetría de información es el núcleo del instrumento.
+        </p>
       </div>
     </section>
 
-    <!-- SECTION 03 — TAXONOMÍA (placeholder, Paso 2) -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 03 — INTUICIÓN
+         ══════════════════════════════════════════ -->
+    <section class="section fade-up" id="intuition">
+      <div class="section-label">03 — Intuición</div>
+      <h2 class="section-title">Tres momentos, <em>una decisión</em></h2>
+      <p class="section-subtitle">
+        El ciclo de vida de la chooser no es lineal: atraviesa tres estados cualitativamente distintos,
+        cada uno con su propio perfil de riesgo y valor.
+      </p>
+
+      <!-- Timeline horizontal de estados -->
+      <div class="intuition-timeline">
+
+        <!-- Estado 1: hoy -->
+        <div class="int-node node-green">
+          <div class="int-node-badge badge-green">$t = 0$</div>
+          <div class="int-node-title">Compra</div>
+          <div class="int-node-desc">
+            Se paga la prima $V_0$.<br/>
+            El contrato existe en <em>superposición</em>:<br/>
+            es call <strong>y</strong> put simultáneamente.
+          </div>
+          <div class="int-split-row" style="margin-top:14px;">
+            <div class="int-split-item">
+              <span class="dot" style="background:var(--green)"></span>
+              Prima única, sin dirección comprometida
+            </div>
+            <div class="int-split-item">
+              <span class="dot" style="background:var(--green)"></span>
+              Costo $&lt;$ straddle equivalente
+            </div>
+          </div>
+        </div>
+
+        <!-- Flecha 1 -->
+        <div class="int-arrow">
+          <div class="int-arrow-line">
+            <div class="int-arrow-track"></div>
+            <div class="int-arrow-label">$[0, t_c]$</div>
+          </div>
+        </div>
+
+        <!-- Estado 2: fecha de elección -->
+        <div class="int-node node-split">
+          <div class="int-node-badge badge-blue">$t = t_c$</div>
+          <div class="int-node-title">Elección</div>
+          <div class="int-node-desc">
+            Se revela la identidad del contrato.<br/>
+            El tenedor elige la opción de mayor valor:
+          </div>
+          <div class="int-split-row" style="margin-top:14px;">
+            <div class="int-split-item">
+              <span class="dot" style="background:var(--green)"></span>
+              <strong style="color:var(--green)">Call</strong>&nbsp;si $S_{t_c}$ subió y $C > P$
+            </div>
+            <div class="int-split-item">
+              <span class="dot" style="background:var(--red)"></span>
+              <strong style="color:var(--red)">Put</strong>&nbsp;si $S_{t_c}$ cayó y $P > C$
+            </div>
+          </div>
+        </div>
+
+        <!-- Flecha 2 -->
+        <div class="int-arrow">
+          <div class="int-arrow-line">
+            <div class="int-arrow-track"></div>
+            <div class="int-arrow-label">$[t_c, T]$</div>
+          </div>
+        </div>
+
+        <!-- Estado 3: vencimiento -->
+        <div class="int-node node-amber">
+          <div class="int-node-badge badge-amber">$t = T$</div>
+          <div class="int-node-title">Vencimiento</div>
+          <div class="int-node-desc">
+            La opción elegida liquida su payoff estándar:
+          </div>
+          <div class="int-split-row" style="margin-top:14px;">
+            <div class="int-split-item">
+              <span class="dot" style="background:var(--green)"></span>
+              Call: $\max(S_T - K,\; 0)$
+            </div>
+            <div class="int-split-item">
+              <span class="dot" style="background:var(--red)"></span>
+              Put: $\max(K - S_T,\; 0)$
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Insight de la superposición -->
+      <div class="insight-box amber">
+        <div class="insight-label">La analogía cuántica</div>
+        <p class="insight-text">
+          Entre $t=0$ y $t=t_c$, el instrumento se comporta como el <strong>gato de Schrödinger</strong>
+          de los derivados: es call y put hasta que el tenedor observa el mercado y colapsa el contrato
+          a una sola identidad. Esta superposición es precisamente lo que se está comprando: tiempo para
+          decidir con más información.
+        </p>
+      </div>
+
+      <!-- Comparativa de costo -->
+      <div style="margin-top: 40px;">
+        <div class="card-label" style="margin-bottom: 16px;">Comparativa de costo vs. estrategias alternativas</div>
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-label">Chooser Option</div>
+            <div class="card-value green">$V_0^{Ch}$</div>
+            <div class="card-desc">Prima más baja: solo una opción se activa en $t_c$. El vendedor retiene el valor de la pierna descartada.</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Straddle (Call + Put)</div>
+            <div class="card-value amber">$C_0 + P_0$</div>
+            <div class="card-desc">Prima más alta: ambas piernas están vivas hasta $T$. El comprador paga por dirección ilimitada en ambos sentidos.</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Call o Put sola</div>
+            <div class="card-value" style="color:var(--blue);">$C_0$ ó $P_0$</div>
+            <div class="card-desc">Prima más baja de las tres, pero requiere visión direccional desde $t=0$. Sin flexibilidad posterior.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight-box blue" style="margin-top: 32px;">
+        <div class="insight-label">Relación de precios — resultado de Rubinstein</div>
+        <p class="insight-text">
+          Bajo mercados sin arbitraje se cumple: $\;P(0 \leq V_0^{Ch}) \leq V_0^{Ch} \leq C_0 + P_0$.
+          Cuanto más corto sea el intervalo $[0, t_c]$ relativo a $[0, T]$, más se acercará la
+          chooser al straddle (menos tiempo para distinguir call de put). Cuando $t_c \to 0$,
+          <code>Chooser → max(C, P)</code>, que vale menos que el straddle.
+        </p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 04 — TAXONOMÍA
+         ══════════════════════════════════════════ -->
     <section class="section fade-up" id="taxonomy">
-      <div class="section-label">Taxonomía</div>
-      <h2 class="section-title">Plain vs. <em>Complex</em></h2>
-      <p class="section-subtitle">Contenido detallado — Paso 2</p>
-      <div class="placeholder">
-        <div class="ph-icon">🌿</div>
-        <div class="ph-label">Sección en construcción · Paso 2</div>
+      <div class="section-label">04 — Taxonomía</div>
+      <h2 class="section-title">Plain vs. <em>Complex Chooser</em></h2>
+      <p class="section-subtitle">
+        La distinción fundamental radica en si los parámetros de las opciones subyacentes
+        son simétricos o pueden diferir entre la rama call y la rama put.
+      </p>
+
+      <div class="tax-grid">
+
+        <!-- PLAIN CHOOSER -->
+        <div class="tax-card plain">
+          <div class="tax-type plain">Plain Chooser</div>
+          <h3>Opción simple sobre la identidad</h3>
+          <p>
+            Ambas opciones subyacentes comparten el <em>mismo strike</em> $K$ y el <em>mismo
+            vencimiento</em> $T$. La única asimetría es la dirección — call o put —, elegida en $t_c$.
+          </p>
+          <ul class="tax-attr-list">
+            <li><strong>Strike idéntico:</strong> $K_{call} = K_{put} = K$</li>
+            <li><strong>Vencimiento único:</strong> $T_{call} = T_{put} = T$</li>
+            <li><strong>Pricing cerrado:</strong> fórmula analítica de Rubinstein directamente aplicable</li>
+            <li><strong>Liquidez:</strong> es la variante más estandarizada y negociada OTC</li>
+            <li><strong>Uso típico:</strong> cobertura ante eventos binarios simétricos (FOMC, earnings)</li>
+          </ul>
+        </div>
+
+        <!-- COMPLEX CHOOSER -->
+        <div class="tax-card complex">
+          <div class="tax-type complex">Complex Chooser</div>
+          <h3>Opción sobre términos independientes</h3>
+          <p>
+            Permite que la rama call y la rama put tengan <em>strikes distintos</em> y/o
+            <em>vencimientos distintos</em>: $K_c \neq K_p$ y/o $T_c \neq T_p$.
+            Requiere ajustes en el modelo.
+          </p>
+          <ul class="tax-attr-list">
+            <li><strong>Strikes diferenciados:</strong> $K_{call} \neq K_{put}$</li>
+            <li><strong>Vencimientos diferenciados:</strong> $T_{call} \neq T_{put}$</li>
+            <li><strong>Pricing:</strong> se obtiene por extensión de Rubinstein o por simulación Monte Carlo</li>
+            <li><strong>Liquidez:</strong> menor; típicamente estructurada a medida</li>
+            <li><strong>Uso típico:</strong> coberturas asimétricas donde el riesgo al alza y a la baja difieren en magnitud o horizonte</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tabla comparativa -->
+      <div class="card" style="margin-top: 8px;">
+        <div class="card-label" style="margin-bottom: 16px;">Tabla comparativa de atributos</div>
+        <table class="tax-compare-table">
+          <thead>
+            <tr>
+              <th>Atributo</th>
+              <th>Plain Chooser</th>
+              <th>Complex Chooser</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-attr">Strike de la call</td>
+              <td class="col-plain">$K$ (fijo, compartido)</td>
+              <td class="col-complex">$K_c$ (libre)</td>
+            </tr>
+            <tr>
+              <td class="col-attr">Strike de la put</td>
+              <td class="col-plain">$K$ (fijo, compartido)</td>
+              <td class="col-complex">$K_p$ (libre, $K_p \neq K_c$)</td>
+            </tr>
+            <tr>
+              <td class="col-attr">Vencimiento call</td>
+              <td class="col-plain">$T$ (único)</td>
+              <td class="col-complex">$T_c$ (independiente)</td>
+            </tr>
+            <tr>
+              <td class="col-attr">Vencimiento put</td>
+              <td class="col-plain">$T$ (único)</td>
+              <td class="col-complex">$T_p$ (independiente, $T_p \neq T_c$)</td>
+            </tr>
+            <tr>
+              <td class="col-attr">Fórmula cerrada</td>
+              <td class="col-plain">Sí — Rubinstein (1991)</td>
+              <td class="col-complex">Parcial / Monte Carlo</td>
+            </tr>
+            <tr>
+              <td class="col-attr">Costo relativo</td>
+              <td class="col-plain">Base de referencia</td>
+              <td class="col-complex">Mayor (mayor flexibilidad)</td>
+            </tr>
+            <tr>
+              <td class="col-attr">Liquidez OTC</td>
+              <td class="col-plain">Alta (estándar de mercado)</td>
+              <td class="col-complex">Baja (estructurado a medida)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="insight-box" style="margin-top: 32px;">
+        <div class="insight-label">Nota sobre el alcance de este toolkit</div>
+        <p class="insight-text">
+          El simulador interactivo (Sección 06) y la comparativa de estrategias (Sección 07) se enfocan
+          en el <strong>plain chooser</strong>, por ser la variante con solución analítica cerrada
+          y mayor relevancia pedagógica. Las extensiones al complex chooser son aplicables
+          mediante simulación Monte Carlo con los mismos parámetros base.
+        </p>
       </div>
     </section>
 
-    <!-- SECTION 04 — FÓRMULA (placeholder, Paso 2) -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 05 — FÓRMULA DE RUBINSTEIN
+         ══════════════════════════════════════════ -->
     <section class="section fade-up" id="formula">
-      <div class="section-label">Estructura Matemática</div>
+      <div class="section-label">05 — Estructura Matemática</div>
       <h2 class="section-title">La fórmula de <em>Rubinstein</em></h2>
-      <p class="section-subtitle">Contenido detallado — Paso 2</p>
-      <div class="placeholder">
-        <div class="ph-icon">∫</div>
-        <div class="ph-label">Sección en construcción · Paso 2</div>
+      <p class="section-subtitle">
+        Bajo los supuestos de Black-Scholes, Rubinstein (1991) demostró que una chooser plain
+        puede replicarse exactamente con una cartera de dos opciones vainilla. La derivación
+        no requiere simulación: tiene forma cerrada.
+      </p>
+
+      <!-- Paso 1 — Argumento de paridad -->
+      <div class="derivation-steps">
+
+        <div class="deriv-step">
+          <div class="deriv-num">1</div>
+          <div class="deriv-body">
+            <div class="deriv-tag tag-blue">Punto de partida</div>
+            <div class="deriv-title">Valor en $t_c$ — máximo de call y put</div>
+            <div class="deriv-desc">
+              En la fecha de elección $t_c$, el tenedor conserva la opción de mayor valor.
+              El valor del instrumento en ese instante es:
+            </div>
+            <div class="formula-block">
+              <div class="formula-block-title">Payoff de la chooser en $t_c$</div>
+              $$V_{t_c} = \max\bigl(C(S_{t_c},K,T-t_c,r,\sigma),\;P(S_{t_c},K,T-t_c,r,\sigma)\bigr)$$
+            </div>
+          </div>
+        </div>
+
+        <div class="deriv-step">
+          <div class="deriv-num">2</div>
+          <div class="deriv-body">
+            <div class="deriv-tag tag-green">Paridad put-call</div>
+            <div class="deriv-title">Reescribir la put en términos de la call</div>
+            <div class="deriv-desc">
+              Por la paridad put-call europea evaluada en $t_c$, con tiempo residual $\tau = T - t_c$:
+            </div>
+            <div class="formula-block">
+              <div class="formula-block-title">Paridad put-call en $t_c$</div>
+              $$P(S_{t_c},K,\tau) = C(S_{t_c},K,\tau) - S_{t_c} + K e^{-r\tau}$$
+            </div>
+            <div class="deriv-desc" style="margin-top: 12px;">
+              Sustituyendo en el payoff y usando la identidad $\max(a, a+b) = a + \max(0, b)$:
+            </div>
+            <div class="formula-block">
+              <div class="formula-block-title">Simplificación algebraica</div>
+              $$V_{t_c} = C(S_{t_c},K,\tau) + \max\!\bigl(0,\; K e^{-r\tau} - S_{t_c}\bigr)$$
+            </div>
+          </div>
+        </div>
+
+        <div class="deriv-step">
+          <div class="deriv-num">3</div>
+          <div class="deriv-body">
+            <div class="deriv-tag tag-amber">Identificación de instrumentos</div>
+            <div class="deriv-title">La chooser como cartera replicante</div>
+            <div class="deriv-desc">
+              El término $\max(0,\, Ke^{-r\tau} - S_{t_c})$ es exactamente el payoff de una
+              <strong>put europea</strong> con strike $K^* = Ke^{-r(T-t_c)}$ y vencimiento $t_c$
+              (put sobre el subyacente, con strike descontado al momento de elección).
+              Por lo tanto la chooser en $t=0$ vale:
+            </div>
+            <div class="formula-block">
+              <div class="formula-block-title">Fórmula de replicación de Rubinstein</div>
+              $$\boxed{V_0^{Ch} = C(S_0, K, T, r, q, \sigma) + P(S_0,\, Ke^{-(r-q)(T-t_c)},\, t_c,\, r,\, q,\, \sigma)}$$
+            </div>
+            <div class="deriv-desc" style="margin-top: 12px;">
+              La chooser es equivalente a poseer simultáneamente:
+              (i) una call europea sobre el subyacente con strike $K$ y vencimiento $T$, y
+              (ii) una put europea sobre el subyacente con strike $K^* = Ke^{-(r-q)(T-t_c)}$
+              y vencimiento $t_c$.
+            </div>
+          </div>
+        </div>
+
+        <div class="deriv-step">
+          <div class="deriv-num">4</div>
+          <div class="deriv-body">
+            <div class="deriv-tag tag-purple">Expansión Black-Scholes</div>
+            <div class="deriv-title">Fórmula completa con dividendos continuos</div>
+            <div class="deriv-desc">
+              Expandiendo con la fórmula de Black-Scholes con tasa de dividendos continua $q$:
+            </div>
+            <div class="formula-block">
+              <div class="formula-block-title">Componente call — vencimiento $T$</div>
+              $$C = S_0 e^{-qT} N(d_1) - K e^{-rT} N(d_2)$$
+              $$d_1 = \frac{\ln(S_0/K) + (r - q + \tfrac{1}{2}\sigma^2)T}{\sigma\sqrt{T}}, \qquad d_2 = d_1 - \sigma\sqrt{T}$$
+            </div>
+            <div class="formula-block" style="margin-top: 16px;">
+              <div class="formula-block-title">Componente put — vencimiento $t_c$, strike ajustado $K^*$</div>
+              $$P^* = K^* e^{-r t_c} N(-d_4) - S_0 e^{-q t_c} N(-d_3)$$
+              $$K^* = K e^{-(r-q)(T-t_c)}$$
+              $$d_3 = \frac{\ln(S_0/K^*) + (r - q + \tfrac{1}{2}\sigma^2)t_c}{\sigma\sqrt{t_c}}, \qquad d_4 = d_3 - \sigma\sqrt{t_c}$$
+            </div>
+            <div class="formula-block" style="margin-top: 16px;">
+              <div class="formula-block-title">Precio total de la chooser plain</div>
+              $$\boxed{V_0^{Ch} = S_0 e^{-qT} N(d_1) - Ke^{-rT} N(d_2) + K^* e^{-r t_c} N(-d_4) - S_0 e^{-q t_c} N(-d_3)}$$
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Glosario de parámetros -->
+      <div class="card-label" style="margin: 36px 0 16px;">Glosario de parámetros</div>
+      <div class="formula-params-grid">
+        <div class="fparam"><span class="sym" style="color:var(--green);">$S_0$</span><div class="def"><strong>Precio spot</strong> del subyacente en $t = 0$</div></div>
+        <div class="fparam"><span class="sym" style="color:var(--amber);">$K$</span><div class="def"><strong>Strike</strong> de las opciones subyacentes (plain: único)</div></div>
+        <div class="fparam"><span class="sym" style="color:var(--blue);">$T$</span><div class="def"><strong>Vencimiento final</strong> del contrato (en años)</div></div>
+        <div class="fparam"><span class="sym" style="color:var(--blue);">$t_c$</span><div class="def"><strong>Fecha de elección</strong> — $0 < t_c < T$</div></div>
+        <div class="fparam"><span class="sym" style="color:var(--text-muted);">$r$</span><div class="def"><strong>Tasa libre de riesgo</strong> continua anualizada</div></div>
+        <div class="fparam"><span class="sym" style="color:var(--text-muted);">$q$</span><div class="def"><strong>Tasa de dividendos</strong> continua (0 si no hay)</div></div>
+        <div class="fparam"><span class="sym" style="color:var(--purple);">$\sigma$</span><div class="def"><strong>Volatilidad</strong> implícita anualizada del subyacente</div></div>
+        <div class="fparam"><span class="sym" style="color:var(--text-muted);">$N(\cdot)$</span><div class="def"><strong>CDF normal estándar</strong> acumulada</div></div>
+        <div class="fparam"><span class="sym" style="color:var(--red);">$K^*$</span><div class="def"><strong>Strike ajustado</strong> de la put replicante: $Ke^{-(r-q)(T-t_c)}$</div></div>
+        <div class="fparam"><span class="sym" style="color:var(--text-muted);">$d_1,d_2$</span><div class="def">Argumentos B-S de la call con vencimiento $T$</div></div>
+        <div class="fparam"><span class="sym" style="color:var(--text-muted);">$d_3,d_4$</span><div class="def">Argumentos B-S de la put replicante con vencimiento $t_c$</div></div>
+      </div>
+
+      <!-- Insight final fórmula -->
+      <div class="insight-box" style="margin-top: 40px;">
+        <div class="insight-label">Lectura económica del resultado</div>
+        <p class="insight-text">
+          La elegancia de Rubinstein reside en que <strong>no necesita simulación</strong>: la chooser
+          es exactamente una call larga a $(K, T)$ más una put larga a $(K^*, t_c)$. El strike ajustado
+          $K^* = Ke^{-(r-q)(T-t_c)}$ captura el efecto de "traer el strike al presente" descontando por
+          la diferencia entre tasa libre de riesgo y dividendos durante el período $[t_c, T]$.
+          Cuando $r = q$, $K^* = K$ y la fórmula se simplifica considerablemente.
+        </p>
       </div>
     </section>
 
-    <!-- SECTION 05 — SIMULADOR (placeholder, Paso 3) -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 06 — SIMULADOR (Paso 3)
+         ══════════════════════════════════════════ -->
     <section class="section fade-up" id="simulator">
-      <div class="section-label">Simulador Interactivo</div>
+      <div class="section-label">06 — Simulador Interactivo</div>
       <h2 class="section-title">Laboratorio de <em>Pricing</em></h2>
       <p class="section-subtitle">Simulador completo — Paso 3</p>
       <div class="placeholder">
@@ -844,9 +1238,11 @@
       </div>
     </section>
 
-    <!-- SECTION 06 — COMPARATIVA (placeholder, Paso 4) -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 07 — COMPARATIVA (Paso 4)
+         ══════════════════════════════════════════ -->
     <section class="section fade-up" id="comparison">
-      <div class="section-label">Comparativa de Estrategias</div>
+      <div class="section-label">07 — Comparativa de Estrategias</div>
       <h2 class="section-title">Chooser vs. <em>Alternativas</em></h2>
       <p class="section-subtitle">Comparativa en tiempo real — Paso 4</p>
       <div class="placeholder">
@@ -855,9 +1251,11 @@
       </div>
     </section>
 
-    <!-- SECTION 07 — CASO DE USO (placeholder, Paso 4) -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 08 — CASO DE USO (Paso 4)
+         ══════════════════════════════════════════ -->
     <section class="section fade-up" id="usecase">
-      <div class="section-label">Aplicación Práctica</div>
+      <div class="section-label">08 — Aplicación Práctica</div>
       <h2 class="section-title">Caso: evento <em>macroeconómico</em></h2>
       <p class="section-subtitle">Caso de uso real — Paso 4</p>
       <div class="placeholder">
@@ -866,9 +1264,11 @@
       </div>
     </section>
 
-    <!-- SECTION 08 — SÍNTESIS (placeholder, Paso 5) -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 09 — SÍNTESIS (Paso 5)
+         ══════════════════════════════════════════ -->
     <section class="section fade-up" id="summary">
-      <div class="section-label">Síntesis</div>
+      <div class="section-label">09 — Síntesis</div>
       <h2 class="section-title">¿Por qué <em>chooser</em>?</h2>
       <p class="section-subtitle">Síntesis final — Paso 5</p>
       <div class="placeholder">
@@ -880,7 +1280,7 @@
   </main>
 
   <!-- ============================================================
-       JAVASCRIPT — Scrollspy + smooth nav + fade-up observer
+       JAVASCRIPT
        ============================================================ -->
   <script>
     /* ── Smooth nav ── */
@@ -889,7 +1289,7 @@
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    /* ── Scrollspy (IntersectionObserver) ── */
+    /* ── Scrollspy ── */
     const navItems = document.querySelectorAll('.nav-item');
     const sections = document.querySelectorAll('.section[id]');
 
@@ -905,7 +1305,7 @@
 
     sections.forEach(s => spyObserver.observe(s));
 
-    /* ── Fade-up reveal on scroll ── */
+    /* ── Fade-up reveal ── */
     const fadeObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
