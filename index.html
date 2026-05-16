@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chooser Options — Financial Tool</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+       ============================================================ */
+    :root {
+      /* Surfaces */
+      --bg:           #0b0d11;
+      --bg-deep:      #080a0e;
+      --surface:      #11141a;
+      --surface-2:    #161b24;
+      --surface-3:    #1c2330;
+      --border:       rgba(255,255,255,0.07);
+      --border-strong:rgba(255,255,255,0.13);
+
+      /* Text */
+      --text:         #e8eaf0;
+      --text-muted:   #7a8499;
+      --text-faint:   #3d4557;
+
+      /* Accents */
+      --green:        #00e5a0;   /* primary — confirmation, gain */
+      --green-dim:    rgba(0,229,160,0.12);
+      --amber:        #f5c842;   /* secondary — strike, attention */
+      --amber-dim:    rgba(245,200,66,0.12);
+      --red:          #ff5f6d;   /* loss, vencimiento */
+      --red-dim:      rgba(255,95,109,0.12);
+      --blue:         #4a9eff;   /* neutral data */
+      --blue-dim:     rgba(74,158,255,0.12);
+
+      /* Typography */
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+      /* Layout */
+      --sidebar-w:    220px;
+      --header-h:     52px;
+      --radius:       8px;
+      --radius-lg:    14px;
+
+      /* Transitions */
+      --ease:         cubic-bezier(0.16, 1, 0.3, 1);
+      --t-fast:       160ms;
+      --t-base:       280ms;
+    }
+
+    /* ============================================================
+       BASE RESET
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 15px; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    ::selection { background: rgba(0,229,160,0.25); color: var(--text); }
+    :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; border-radius: 4px; }
+
+    /* ============================================================
+       SCROLLBAR
+       ============================================================ */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+    /* ============================================================
+       TOP HEADER BAR
+       ============================================================ */
+    .header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: rgba(8,10,14,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      z-index: 100;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-logo {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 11px; font-weight: 700;
+      color: var(--bg-deep);
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+    }
+
+    .header-title {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+
+    .header-title span {
+      color: var(--green);
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--green);
+    }
+
+    .status-dot::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ============================================================
+       SIDEBAR NAVIGATION
+       ============================================================ */
+    .sidebar {
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      width: var(--sidebar-w);
+      height: calc(100vh - var(--header-h));
+      background: var(--bg-deep);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 24px 0 40px;
+      z-index: 90;
+    }
+
+    .sidebar-section-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      padding: 0 20px 8px;
+      margin-top: 20px;
+    }
+
+    .sidebar-section-label:first-child { margin-top: 0; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: color var(--t-fast) var(--ease),
+                  background var(--t-fast) var(--ease),
+                  border-color var(--t-fast) var(--ease);
+      position: relative;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .nav-item.active {
+      color: var(--green);
+      border-left-color: var(--green);
+      background: var(--green-dim);
+    }
+
+    .nav-item .nav-icon {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      flex-shrink: 0;
+      min-width: 18px;
+    }
+
+    .nav-item.active .nav-icon { color: var(--green); }
+
+    /* ============================================================
+       MAIN CONTENT AREA
+       ============================================================ */
+    .main {
+      margin-left: var(--sidebar-w);
+      margin-top: var(--header-h);
+      min-height: calc(100vh - var(--header-h));
+      padding: 0;
+    }
+
+    /* ============================================================
+       SECTIONS
+       ============================================================ */
+    .section {
+      min-height: 100vh;
+      padding: 64px 60px 80px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .section:last-child { border-bottom: none; }
+
+    /* Section intro label */
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 20px; height: 1px;
+      background: var(--green);
+      opacity: 0.6;
+    }
+
+    /* Section headings */
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--green);
+    }
+
+    .section-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 640px;
+      line-height: 1.65;
+      margin-bottom: 48px;
+    }
+
+    /* ============================================================
+       CARDS / PANELS
+       ============================================================ */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: border-color var(--t-base) var(--ease),
+                  box-shadow var(--t-base) var(--ease);
+    }
+
+    .card:hover {
+      border-color: var(--border-strong);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    }
+
+    .card-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 10px;
+    }
+
+    .card-value {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .card-value.green { color: var(--green); text-shadow: 0 0 20px rgba(0,229,160,0.4); }
+    .card-value.amber { color: var(--amber); text-shadow: 0 0 20px rgba(245,200,66,0.3); }
+    .card-value.red   { color: var(--red);   text-shadow: 0 0 20px rgba(255,95,109,0.3); }
+
+    .card-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       GRID HELPERS
+       ============================================================ */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+    /* ============================================================
+       HERO SECTION (#intro)
+       ============================================================ */
+    #intro {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 60px;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 50%, rgba(0,229,160,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 10% 80%, rgba(74,158,255,0.04) 0%, transparent 55%),
+        var(--bg);
+      overflow: hidden;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--green);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--green-dim);
+      border: 1px solid rgba(0,229,160,0.2);
+      border-radius: 99px;
+      padding: 5px 14px;
+      margin-bottom: 28px;
+      width: fit-content;
+    }
+
+    .hero-heading {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 5.5vw, 5rem);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      max-width: 760px;
+      margin-bottom: 24px;
+    }
+
+    .hero-heading em {
+      font-style: italic;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 580px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+    }
+
+    .hero-kpis {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .hero-kpi {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hero-kpi-val {
+      font-family: var(--font-mono);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .hero-kpi-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .hero-kpi-divider {
+      width: 1px;
+      background: var(--border-strong);
+      align-self: stretch;
+    }
+
+    /* ============================================================
+       DECORATIVE GRID LINES (hero bg)
+       ============================================================ */
+    .grid-lines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image:
+        linear-gradient(to right, var(--text) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--text) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+    }
+
+    #intro > * { position: relative; z-index: 1; }
+    #intro > .grid-lines { z-index: 0; }
+
+    /* ============================================================
+       FORMULA BLOCK
+       ============================================================ */
+    .formula-block {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--text-muted);
+      overflow-x: auto;
+    }
+
+    .formula-block .formula-title {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 14px;
+    }
+
+    .formula-block .formula-eq {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 2;
+    }
+
+    .formula-block .formula-eq .hl-green { color: var(--green); }
+    .formula-block .formula-eq .hl-amber { color: var(--amber); }
+    .formula-block .formula-eq .hl-blue  { color: var(--blue); }
+    .formula-block .formula-eq .hl-red   { color: var(--red); }
+
+    .formula-params {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .formula-param {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 8px 12px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .formula-param .sym {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 26px;
+      color: var(--amber);
+    }
+
+    .formula-param .def {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ============================================================
+       TIMELINE (plain vs complex)
+       ============================================================ */
+    .timeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .timeline-track {
+      position: absolute;
+      left: 20px;
+      top: 24px;
+      bottom: 24px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--green), var(--blue));
+      opacity: 0.3;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      padding: 16px 0 16px 56px;
+      position: relative;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: 12px;
+      top: 20px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--green);
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .timeline-dot::after {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .timeline-dot.amber { border-color: var(--amber); }
+    .timeline-dot.amber::after { background: var(--amber); }
+
+    .timeline-content {}
+
+    .timeline-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 4px;
+    }
+
+    .timeline-heading {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .timeline-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 540px;
+    }
+
+    /* ============================================================
+       COMPARISON TABLE
+       ============================================================ */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .compare-table th {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      text-align: left;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-strong);
+    }
+
+    .compare-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    .compare-table tr:last-child td { border-bottom: none; }
+
+    .compare-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+    }
+
+    .compare-table td.highlight-green { color: var(--green); font-weight: 600; font-family: var(--font-mono); }
+    .compare-table td.highlight-amber { color: var(--amber); font-weight: 600; }
+    .compare-table td.label-col { color: var(--text); font-weight: 600; }
+
+    /* ============================================================
+       PLACEHOLDER PANELS (for Pasos 2-5)
+       ============================================================ */
+    .placeholder {
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 60px;
+      text-align: center;
+      color: var(--text-faint);
+    }
+
+    .placeholder .ph-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+
+    .placeholder .ph-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       SCROLLSPY — active nav highlight
+       ============================================================ */
+    /* handled via JS IntersectionObserver below */
+
+    /* ============================================================
+       RESPONSIVE (grabación en desktop — mínimo mobile handling)
+       ============================================================ */
+    @media (max-width: 900px) {
+      :root { --sidebar-w: 0px; }
+      .sidebar { display: none; }
+      .section { padding: 48px 24px 60px; }
+      #intro { padding: 60px 24px; }
+    }
+
+    /* ============================================================
+       FADE-IN ANIMATION (secciones al entrar en viewport)
+       ============================================================ */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       TOP HEADER
+       ============================================================ -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="header-logo">CO</div>
+      <span class="header-title"><span>Chooser</span> Options — Derivatives Toolkit</span>
+    </div>
+    <div class="header-meta">
+      <span class="header-tag">Rubinstein (1991)</span>
+      <span class="status-dot">Model Active</span>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <nav class="sidebar" role="navigation" aria-label="Secciones">
+
+    <div class="sidebar-section-label">Fundamentos</div>
+    <a class="nav-item active" href="#intro" onclick="smoothNav(event, 'intro')">
+      <span class="nav-icon">01</span> Introducción
+    </a>
+    <a class="nav-item" href="#definition" onclick="smoothNav(event, 'definition')">
+      <span class="nav-icon">02</span> Definición
+    </a>
+    <a class="nav-item" href="#taxonomy" onclick="smoothNav(event, 'taxonomy')">
+      <span class="nav-icon">03</span> Taxonomía
+    </a>
+    <a class="nav-item" href="#formula" onclick="smoothNav(event, 'formula')">
+      <span class="nav-icon">04</span> Estructura Matemática
+    </a>
+
+    <div class="sidebar-section-label">Herramienta</div>
+    <a class="nav-item" href="#simulator" onclick="smoothNav(event, 'simulator')">
+      <span class="nav-icon">05</span> Simulador
+    </a>
+    <a class="nav-item" href="#comparison" onclick="smoothNav(event, 'comparison')">
+      <span class="nav-icon">06</span> Comparativa
+    </a>
+
+    <div class="sidebar-section-label">Aplicación</div>
+    <a class="nav-item" href="#usecase" onclick="smoothNav(event, 'usecase')">
+      <span class="nav-icon">07</span> Caso de Uso
+    </a>
+    <a class="nav-item" href="#summary" onclick="smoothNav(event, 'summary')">
+      <span class="nav-icon">08</span> Síntesis
+    </a>
+
+  </nav>
+
+  <!-- ============================================================
+       MAIN CONTENT
+       ============================================================ -->
+  <main class="main">
+
+    <!-- SECTION 01 — HERO / INTRO -->
+    <section class="section" id="intro">
+      <div class="grid-lines"></div>
+
+      <div class="hero-eyebrow">
+        Derivatives Desk · Exotic Options
+      </div>
+
+      <h1 class="hero-heading">
+        La opción que todavía<br />no ha <em>elegido</em> qué ser.
+      </h1>
+
+      <p class="hero-sub">
+        Una <strong>chooser option</strong> otorga al comprador el derecho de decidir,
+        en una fecha futura t<sub>c</sub>, si el contrato actúa como call o como put
+        sobre el mismo subyacente — antes de esa fecha, el instrumento existe en
+        superposición: es ambas cosas a la vez.
+      </p>
+
+      <div class="hero-kpis">
+        <div class="hero-kpi">
+          <span class="hero-kpi-val" style="color:var(--green); font-family:var(--font-mono);">t<sub style="font-size:0.7em">c</sub></span>
+          <span class="hero-kpi-label">Fecha de elección</span>
+        </div>
+        <div class="hero-kpi-divider"></div>
+        <div class="hero-kpi">
+          <span class="hero-kpi-val" style="color:var(--amber); font-family:var(--font-mono);">T</span>
+          <span class="hero-kpi-label">Vencimiento del contrato</span>
+        </div>
+        <div class="hero-kpi-divider"></div>
+        <div class="hero-kpi">
+          <span class="hero-kpi-val" style="color:var(--blue); font-family:var(--font-mono);">max(C, P)</span>
+          <span class="hero-kpi-label">Payoff en t<sub>c</sub></span>
+        </div>
+        <div class="hero-kpi-divider"></div>
+        <div class="hero-kpi">
+          <span class="hero-kpi-val" style="font-family:var(--font-mono);">1991</span>
+          <span class="hero-kpi-label">Rubinstein — origen</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 02 — DEFINICIÓN (placeholder, Paso 2) -->
+    <section class="section fade-up" id="definition">
+      <div class="section-label">Definición</div>
+      <h2 class="section-title">¿Qué es una <em>chooser option</em>?</h2>
+      <p class="section-subtitle">Contenido detallado — Paso 2</p>
+      <div class="placeholder">
+        <div class="ph-icon">📋</div>
+        <div class="ph-label">Sección en construcción · Paso 2</div>
+      </div>
+    </section>
+
+    <!-- SECTION 03 — TAXONOMÍA (placeholder, Paso 2) -->
+    <section class="section fade-up" id="taxonomy">
+      <div class="section-label">Taxonomía</div>
+      <h2 class="section-title">Plain vs. <em>Complex</em></h2>
+      <p class="section-subtitle">Contenido detallado — Paso 2</p>
+      <div class="placeholder">
+        <div class="ph-icon">🌿</div>
+        <div class="ph-label">Sección en construcción · Paso 2</div>
+      </div>
+    </section>
+
+    <!-- SECTION 04 — FÓRMULA (placeholder, Paso 2) -->
+    <section class="section fade-up" id="formula">
+      <div class="section-label">Estructura Matemática</div>
+      <h2 class="section-title">La fórmula de <em>Rubinstein</em></h2>
+      <p class="section-subtitle">Contenido detallado — Paso 2</p>
+      <div class="placeholder">
+        <div class="ph-icon">∫</div>
+        <div class="ph-label">Sección en construcción · Paso 2</div>
+      </div>
+    </section>
+
+    <!-- SECTION 05 — SIMULADOR (placeholder, Paso 3) -->
+    <section class="section fade-up" id="simulator">
+      <div class="section-label">Simulador Interactivo</div>
+      <h2 class="section-title">Laboratorio de <em>Pricing</em></h2>
+      <p class="section-subtitle">Simulador completo — Paso 3</p>
+      <div class="placeholder">
+        <div class="ph-icon">⚗️</div>
+        <div class="ph-label">Simulador en construcción · Paso 3</div>
+      </div>
+    </section>
+
+    <!-- SECTION 06 — COMPARATIVA (placeholder, Paso 4) -->
+    <section class="section fade-up" id="comparison">
+      <div class="section-label">Comparativa de Estrategias</div>
+      <h2 class="section-title">Chooser vs. <em>Alternativas</em></h2>
+      <p class="section-subtitle">Comparativa en tiempo real — Paso 4</p>
+      <div class="placeholder">
+        <div class="ph-icon">📊</div>
+        <div class="ph-label">Comparativa en construcción · Paso 4</div>
+      </div>
+    </section>
+
+    <!-- SECTION 07 — CASO DE USO (placeholder, Paso 4) -->
+    <section class="section fade-up" id="usecase">
+      <div class="section-label">Aplicación Práctica</div>
+      <h2 class="section-title">Caso: evento <em>macroeconómico</em></h2>
+      <p class="section-subtitle">Caso de uso real — Paso 4</p>
+      <div class="placeholder">
+        <div class="ph-icon">🏛️</div>
+        <div class="ph-label">Caso de uso en construcción · Paso 4</div>
+      </div>
+    </section>
+
+    <!-- SECTION 08 — SÍNTESIS (placeholder, Paso 5) -->
+    <section class="section fade-up" id="summary">
+      <div class="section-label">Síntesis</div>
+      <h2 class="section-title">¿Por qué <em>chooser</em>?</h2>
+      <p class="section-subtitle">Síntesis final — Paso 5</p>
+      <div class="placeholder">
+        <div class="ph-icon">✦</div>
+        <div class="ph-label">Síntesis en construcción · Paso 5</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       JAVASCRIPT — Scrollspy + smooth nav + fade-up observer
+       ============================================================ -->
+  <script>
+    /* ── Smooth nav ── */
+    function smoothNav(e, id) {
+      e.preventDefault();
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ── Scrollspy (IntersectionObserver) ── */
+    const navItems = document.querySelectorAll('.nav-item');
+    const sections = document.querySelectorAll('.section[id]');
+
+    const spyObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navItems.forEach(a => {
+            a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+          });
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+
+    sections.forEach(s => spyObserver.observe(s));
+
+    /* ── Fade-up reveal on scroll ── */
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          fadeObserver.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -80px 0px' });
+
+    document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+  </script>
+
+</body>
+</html>
