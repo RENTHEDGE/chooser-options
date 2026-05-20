@@ -597,6 +597,38 @@
                         </div>
                     </div>
                 `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Precio y Valoración</h2>
+                        <div style="margin-top: 2rem; max-width: 900px;">
+                            <p style="margin-bottom: 2rem;"><strong>¿Por qué una Chooser es más cara que opciones vainilla?</strong></p>
+
+                            <div style="text-align: left;">
+                                <div style="background: #f0f4ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent-call);">
+                                    <p><strong style="color: var(--accent-call);">Comparación con Call:</strong><br/>
+                                    Call puro: C(S, K, T)<br/>
+                                    <strong>Chooser es más cara</strong> porque incluye opción de cambiar a put.</p>
+                                </div>
+
+                                <div style="background: #fff3e0; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent-put);">
+                                    <p><strong style="color: var(--accent-put);">Comparación con Put:</strong><br/>
+                                    Put puro: P(S, K, T)<br/>
+                                    <strong>Chooser es más cara</strong> porque tienes más tiempo (esperas hasta τ).</p>
+                                </div>
+
+                                <p style="margin-bottom: 1.5rem; font-weight: bold;">Factores que afectan el precio:</p>
+                                <ul style="list-style-position: inside; line-height: 1.8;">
+                                    <li><strong>Volatilidad (σ):</strong> Mayor volatilidad = mayor valor (más posibilidades)</li>
+                                    <li><strong>Tiempo hasta decisión (τ):</strong> Mayor τ = mayor valor (más tiempo para esperar)</li>
+                                    <li><strong>Tiempo total (T):</strong> Mayor T = mayor valor (más oportunidad)</li>
+                                    <li><strong>Tasa de interés (r):</strong> Afecta el descuento del valor futuro</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
             }
         ];
 
