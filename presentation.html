@@ -496,6 +496,58 @@
                         </div>
                     </div>
                 `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Payoff si elegiste CALL</h2>
+                        <div style="margin-top: 3rem; max-width: 1000px;">
+                            <svg width="100%" height="280" viewBox="0 0 1000 280" style="margin-bottom: 2rem;">
+                                <!-- Axes -->
+                                <line x1="80" y1="220" x2="900" y2="220" stroke="#333" stroke-width="2"/>
+                                <line x1="80" y1="50" x2="80" y2="220" stroke="#333" stroke-width="2"/>
+
+                                <!-- Labels -->
+                                <text x="950" y="225" font-size="14" font-weight="bold">Precio (S)</text>
+                                <text x="60" y="30" font-size="14" font-weight="bold">Payoff</text>
+
+                                <!-- Grid lines -->
+                                <line x1="80" y1="220" x2="900" y2="220" stroke="#ddd" stroke-width="1" stroke-dasharray="5,5"/>
+
+                                <!-- Strike line -->
+                                <line x1="400" y1="220" x2="400" y2="50" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/>
+                                <text x="400" y="240" text-anchor="middle" font-size="12">K</text>
+
+                                <!-- Payoff line (Call) -->
+                                <line x1="80" y1="220" x2="400" y2="220" stroke="#2ecc71" stroke-width="3"/>
+                                <line x1="400" y1="220" x2="900" y2="50" stroke="#2ecc71" stroke-width="3"/>
+                                <circle cx="400" cy="220" r="4" fill="#2ecc71"/>
+
+                                <!-- Area under curve -->
+                                <polygon points="400,220 900,50 900,220" fill="#2ecc71" opacity="0.1"/>
+
+                                <!-- Cost line -->
+                                <line x1="80" y1="200" x2="900" y2="200" stroke="#e74c3c" stroke-width="2" stroke-dasharray="5,5"/>
+                                <text x="50" y="205" font-size="11" fill="#e74c3c">-C₀</text>
+                            </svg>
+
+                            <div style="text-align: left; background: #e8f4f8; padding: 2rem; border-radius: 8px;">
+                                <p style="margin-bottom: 1rem;">
+                                    <strong style="color: var(--accent-call);">Ecuación:</strong><br/>
+                                    <code style="font-size: 1.1rem;">Payoff = max(S - K, 0) - C₀</code>
+                                </p>
+                                <p style="margin-bottom: 1rem;">
+                                    <strong style="color: var(--accent-call);">¿Qué significa?</strong><br/>
+                                    Si el precio <strong>S</strong> sube por encima del strike <strong>K</strong>, ejerces el call y ganas.
+                                </p>
+                                <p>
+                                    <strong style="color: var(--accent-call);">Break-even:</strong><br/>
+                                    S = K + C₀ (necesitas subir más que el costo inicial)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `
             }
         ];
 
