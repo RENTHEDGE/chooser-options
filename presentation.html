@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chooser Option - Presentación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #003366;
+            --secondary: #f8f9fa;
+            --accent-call: #2ecc71;
+            --accent-put: #e74c3c;
+            --timer: #e67e22;
+            --text-dark: #333333;
+            --text-light: #ffffff;
+            --border: #ddd;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--primary);
+            color: var(--text-dark);
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slides-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--secondary);
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 1;
+        }
+
+        .slide.active {
+            opacity: 1;
+            z-index: 10;
+        }
+
+        /* Header con timer */
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 80px;
+            height: 80px;
+            background: var(--secondary);
+            z-index: 20;
+        }
+
+        /* Timer SVG */
+        .timer-container {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 80px;
+            height: 80px;
+            z-index: 25;
+        }
+
+        /* Navigation */
+        .nav-button {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 51, 102, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 50;
+            transition: background 0.3s;
+        }
+
+        .nav-button:hover {
+            background: rgba(0, 51, 102, 0.9);
+        }
+
+        .nav-button.prev {
+            left: 2rem;
+        }
+
+        .nav-button.next {
+            right: 2rem;
+        }
+
+        /* Slide counter */
+        .slide-counter {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            font-size: 18px;
+            color: var(--text-dark);
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 40;
+        }
+
+        /* Javeriana logo */
+        #univ-logo {
+            position: fixed;
+            bottom: 1.4rem;
+            left: 1.5rem;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+        }
+
+        #univ-logo img {
+            height: 72px;
+            width: auto;
+            display: block;
+            opacity: 0.95;
+            filter: drop-shadow(0 1px 3px rgba(0,0,0,.7))
+                    drop-shadow(0 0 8px rgba(0,0,0,.5));
+            transition: opacity 0.2s;
+        }
+
+        #univ-logo img:hover {
+            opacity: 1;
+        }
+
+        /* Content styles */
+        .slide-content {
+            text-align: center;
+            max-width: 90%;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-call {
+            background: var(--accent-call);
+            color: white;
+        }
+
+        .btn-call:hover {
+            background: #27ae60;
+            transform: scale(1.05);
+        }
+
+        .btn-put {
+            background: var(--accent-put);
+            color: white;
+        }
+
+        .btn-put:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .btn-back {
+            background: var(--primary);
+            color: white;
+            margin-top: 1rem;
+        }
+
+        .btn-back:hover {
+            background: #001f3f;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            p { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="slides-wrapper" id="slidesWrapper">
+            <!-- Las diapositivas se agregarán aquí -->
+        </div>
+
+        <!-- Navigation -->
+        <button class="nav-button prev" onclick="previousSlide()">❮</button>
+        <button class="nav-button next" onclick="nextSlide()">❯</button>
+
+        <!-- Slide counter -->
+        <div class="slide-counter">
+            <span id="currentSlide">1</span> / <span id="totalSlides">1</span>
+        </div>
+
+        <!-- Timer -->
+        <div class="timer-container" id="timerContainer"></div>
+
+        <!-- Javeriana Logo -->
+        <div id="univ-logo">
+            <img src="img/Javeriana.png" alt="Pontificia Universidad Javeriana Cali"
+                 onerror="this.parentNode.style.display='none'">
+        </div>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        let slides = [];
+
+        // Array de configuración de slides
+        const slidesConfig = [
+            {
+                html: `
+                    <div class="slide-content">
+                        <h1>La opción que compra tiempo</h1>
+                        <p class="subtitle">Chooser Option</p>
+                        <div style="margin-top: 4rem; font-size: 1.1rem; color: #666;">
+                            <p><strong>Presentado por</strong></p>
+                            <p>Juan Felipe Barriga Beltrán</p>
+                            <p>Ana Sofía Rojas Valderrama</p>
+                        </div>
+                        <div style="margin-top: 5rem; font-size: 4rem; opacity: 0.3;">
+                            ⏳
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>¿Qué es una Chooser Option?</h2>
+                        <div style="text-align: left; max-width: 800px; margin-top: 3rem;">
+                            <div style="background: #e8f4f8; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+                                <p><strong style="font-size: 1.3rem; color: var(--primary);">Definición:</strong></p>
+                                <p>Una opción exótica que te permite <strong>postergar la decisión</strong> sobre si comprar una opción call o put.</p>
+                            </div>
+                            <p><strong>¿Por qué es exótica?</strong><br/>
+                            A diferencia de opciones vainilla (call/put), ofrece <strong>flexibilidad temporal</strong>: decides después de ver más información del mercado.</p>
+                            <p><strong>¿Qué problema resuelve?</strong><br/>
+                            Bajo incertidumbre, compras tiempo para tomar una decisión mejor informada sin perder oportunidades.</p>
+                            <p style="margin-top: 2rem; font-size: 1.1rem;"><em>Es como comprar la opción de elegir,</em><br/><em>en lugar de elegir la opción hoy.</em></p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Cómo funciona</h2>
+                        <div style="margin-top: 3rem; max-width: 1000px;">
+                            <svg width="100%" height="250" viewBox="0 0 1000 250" style="margin-bottom: 2rem;">
+                                <!-- Timeline line -->
+                                <line x1="50" y1="120" x2="950" y2="120" stroke="#003366" stroke-width="3"/>
+
+                                <!-- Punto 1: Hoy -->
+                                <circle cx="50" cy="120" r="15" fill="#2ecc71" stroke="#003366" stroke-width="2"/>
+                                <text x="50" y="170" text-anchor="middle" font-size="14" font-weight="bold">Hoy (t=0)</text>
+                                <text x="50" y="190" text-anchor="middle" font-size="12">Compras la opción</text>
+
+                                <!-- Punto 2: Decisión -->
+                                <circle cx="450" cy="120" r="15" fill="#e67e22" stroke="#003366" stroke-width="2"/>
+                                <text x="450" y="170" text-anchor="middle" font-size="14" font-weight="bold">Fecha decisión (t=τ)</text>
+                                <text x="450" y="190" text-anchor="middle" font-size="12">¿CALL o PUT?</text>
+
+                                <!-- Punto 3: Vencimiento -->
+                                <circle cx="950" cy="120" r="15" fill="#e74c3c" stroke="#003366" stroke-width="2"/>
+                                <text x="950" y="170" text-anchor="middle" font-size="14" font-weight="bold">Vencimiento (t=T)</text>
+                                <text x="950" y="190" text-anchor="middle" font-size="12">Ejerces o no</text>
+                            </svg>
+
+                            <div style="text-align: left; background: #f8f9fa; padding: 2rem; border-radius: 8px; margin-top: 2rem;">
+                                <p><strong style="color: var(--primary);">Paso 1:</strong> Compras la chooser hoy</p>
+                                <p><strong style="color: var(--primary);">Paso 2:</strong> En fecha τ (decisión), observas el mercado</p>
+                                <p><strong style="color: var(--primary);">Paso 3:</strong> Eliges si la opción será CALL o PUT</p>
+                                <p><strong style="color: var(--primary);">Paso 4:</strong> En vencimiento T, la ejerces si es rentable</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>La Fórmula General</h2>
+                        <div style="margin-top: 4rem; max-width: 900px;">
+                            <p style="font-size: 1.3rem; margin-bottom: 3rem;">
+                                El precio de una <strong>Chooser Option</strong> es:
+                            </p>
+                            <div style="background: #f0f4ff; padding: 2.5rem; border-radius: 12px; border-left: 5px solid var(--primary); margin-bottom: 3rem;">
+                                <code style="font-size: 1.5rem; font-weight: bold; color: var(--primary); line-height: 1.8;">
+                                    C<sub>chooser</sub> = C(S, K, T) + P(S, K, T-τ) - P(S, K, τ)
+                                </code>
+                            </div>
+                            <p style="font-size: 1rem; color: #666; margin-top: 2rem;">
+                                <em>Donde:</em><br/>
+                                <strong>C</strong> = Valor call europeo | <strong>P</strong> = Valor put europeo<br/>
+                                <strong>S</strong> = Precio spot | <strong>K</strong> = Strike | <strong>T</strong> = Vencimiento<br/>
+                                <strong>τ</strong> = Fecha de decisión
+                            </p>
+                            <p style="margin-top: 2.5rem; font-size: 0.95rem; color: #999;">
+                                (Desgloseremos cada término en las próximas diapositivas)
+                            </p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Componente 1: El Call</h2>
+                        <div style="margin-top: 3rem; max-width: 900px;">
+                            <div style="background: #e8f5e9; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; border-left: 5px solid var(--accent-call);">
+                                <code style="font-size: 1.3rem; color: var(--accent-call); font-weight: bold;">
+                                    C(S, K, T)
+                                </code>
+                            </div>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--accent-call);">¿Qué representa?</strong><br/>
+                                Una opción call tradicional con vencimiento en <strong>T</strong> (fecha final).
+                            </p>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--accent-call);">¿Por qué aparece?</strong><br/>
+                                Si en la fecha τ (decisión) el mercado ha subido, elegirás el call. Así que pagamos por tener esa oportunidad.
+                            </p>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--accent-call);">Intuición:</strong><br/>
+                                "<em>El derecho a beneficiarte si el precio sube, desde ahora hasta vencimiento.</em>"
+                            </p>
+                            <div style="background: #fff3e0; padding: 1rem; border-radius: 6px; margin-top: 2rem; font-size: 0.95rem;">
+                                <strong>Valor asignado:</strong> Es el valor actual del call europeo según BS u otro modelo.
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Componente 2: El Put (con tiempo τ)</h2>
+                        <div style="margin-top: 3rem; max-width: 900px;">
+                            <div style="background: #fce4ec; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; border-left: 5px solid var(--accent-put);">
+                                <code style="font-size: 1.3rem; color: var(--accent-put); font-weight: bold;">
+                                    +P(S, K, T-τ)
+                                </code>
+                            </div>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--accent-put);">¿Qué representa?</strong><br/>
+                                Un put que vence en <strong>T</strong>, pero valorado desde la fecha de decisión τ.
+                            </p>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--accent-put);">¿Por qué aparece?</strong><br/>
+                                Si elegiste el put en fecha τ, tendrás tiempo <strong>T-τ</strong> hasta ejercerlo. Pagamos por ese derecho de protección.
+                            </p>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--accent-put);">Intuición:</strong><br/>
+                                "<em>El derecho a protegerte si el precio baja, entre τ y vencimiento.</em>"
+                            </p>
+                            <div style="background: #fff3e0; padding: 1rem; border-radius: 6px; margin-top: 2rem; font-size: 0.95rem;">
+                                <strong>Nota:</strong> Tiene tiempo <strong>T-τ</strong>, no <strong>T</strong>, porque ya esperaste hasta τ.
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Componente 3: Ajuste por el tiempo de espera</h2>
+                        <div style="margin-top: 3rem; max-width: 900px;">
+                            <div style="background: #f3e5f5; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; border-left: 5px solid var(--timer);">
+                                <code style="font-size: 1.3rem; color: var(--timer); font-weight: bold;">
+                                    -P(S, K, τ)
+                                </code>
+                            </div>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--timer);">¿Qué representa?</strong><br/>
+                                Un put que expira en la fecha de decisión τ. Se <strong>resta</strong> porque es un costo.
+                            </p>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--timer);">¿Por qué aparece?</strong><br/>
+                                Si en τ el mercado cae, podrías comprar un put simple y ejercerlo inmediatamente. Restamos su valor porque es una alternativa más barata.
+                            </p>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--timer);">Intuición:</strong><br/>
+                                "<em>Descuento por no esperar: si decidiste bajar en τ, podrías hacer algo más simple.</em>"
+                            </p>
+                            <div style="background: #fff3e0; padding: 1rem; border-radius: 6px; margin-top: 2rem; font-size: 0.95rem;">
+                                <strong>Efecto neto:</strong> La chooser es más cara que un put simple porque pagas por la flexibilidad de decidir.
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Síntesis: Intuición Económica</h2>
+                        <div style="margin-top: 3rem; max-width: 900px;">
+                            <div style="text-align: left;">
+                                <p style="margin-bottom: 2rem; font-size: 1.1rem;">
+                                    <strong>La fórmula cuenta una historia:</strong>
+                                </p>
+
+                                <div style="background: #e8f4f8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                                    <p><strong style="color: var(--accent-call);">C(S, K, T)</strong><br/>
+                                    Pagas por tener opción de alza (beneficiarte si sube).</p>
+                                </div>
+
+                                <div style="background: #fce4ec; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                                    <p><strong style="color: var(--accent-put);">+P(S, K, T-τ)</strong><br/>
+                                    Pagas por tener opción de baja después de esperar τ.</p>
+                                </div>
+
+                                <div style="background: #f3e5f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                                    <p><strong style="color: var(--timer);">-P(S, K, τ)</strong><br/>
+                                    Restas lo que NO pagarías si supieras hoy que baja.</p>
+                                </div>
+
+                                <p style="font-size: 1.1rem; color: var(--primary); font-weight: bold; margin-top: 2rem;">
+                                    ➜ Precio justo por <em>comprar el derecho de elegir después</em>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Payoff si elegiste CALL</h2>
+                        <div style="margin-top: 3rem; max-width: 1000px;">
+                            <svg width="100%" height="280" viewBox="0 0 1000 280" style="margin-bottom: 2rem;">
+                                <!-- Axes -->
+                                <line x1="80" y1="220" x2="900" y2="220" stroke="#333" stroke-width="2"/>
+                                <line x1="80" y1="50" x2="80" y2="220" stroke="#333" stroke-width="2"/>
+
+                                <!-- Labels -->
+                                <text x="950" y="225" font-size="14" font-weight="bold">Precio (S)</text>
+                                <text x="60" y="30" font-size="14" font-weight="bold">Payoff</text>
+
+                                <!-- Grid lines -->
+                                <line x1="80" y1="220" x2="900" y2="220" stroke="#ddd" stroke-width="1" stroke-dasharray="5,5"/>
+
+                                <!-- Strike line -->
+                                <line x1="400" y1="220" x2="400" y2="50" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/>
+                                <text x="400" y="240" text-anchor="middle" font-size="12">K</text>
+
+                                <!-- Payoff line (Call) -->
+                                <line x1="80" y1="220" x2="400" y2="220" stroke="#2ecc71" stroke-width="3"/>
+                                <line x1="400" y1="220" x2="900" y2="50" stroke="#2ecc71" stroke-width="3"/>
+                                <circle cx="400" cy="220" r="4" fill="#2ecc71"/>
+
+                                <!-- Area under curve -->
+                                <polygon points="400,220 900,50 900,220" fill="#2ecc71" opacity="0.1"/>
+
+                                <!-- Cost line -->
+                                <line x1="80" y1="200" x2="900" y2="200" stroke="#e74c3c" stroke-width="2" stroke-dasharray="5,5"/>
+                                <text x="50" y="205" font-size="11" fill="#e74c3c">-C₀</text>
+                            </svg>
+
+                            <div style="text-align: left; background: #e8f4f8; padding: 2rem; border-radius: 8px;">
+                                <p style="margin-bottom: 1rem;">
+                                    <strong style="color: var(--accent-call);">Ecuación:</strong><br/>
+                                    <code style="font-size: 1.1rem;">Payoff = max(S - K, 0) - C₀</code>
+                                </p>
+                                <p style="margin-bottom: 1rem;">
+                                    <strong style="color: var(--accent-call);">¿Qué significa?</strong><br/>
+                                    Si el precio <strong>S</strong> sube por encima del strike <strong>K</strong>, ejerces el call y ganas.
+                                </p>
+                                <p>
+                                    <strong style="color: var(--accent-call);">Break-even:</strong><br/>
+                                    S = K + C₀ (necesitas subir más que el costo inicial)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Payoff si elegiste PUT</h2>
+                        <div style="margin-top: 3rem; max-width: 1000px;">
+                            <svg width="100%" height="280" viewBox="0 0 1000 280" style="margin-bottom: 2rem;">
+                                <!-- Axes -->
+                                <line x1="80" y1="220" x2="900" y2="220" stroke="#333" stroke-width="2"/>
+                                <line x1="80" y1="50" x2="80" y2="220" stroke="#333" stroke-width="2"/>
+
+                                <!-- Labels -->
+                                <text x="950" y="225" font-size="14" font-weight="bold">Precio (S)</text>
+                                <text x="60" y="30" font-size="14" font-weight="bold">Payoff</text>
+
+                                <!-- Strike line -->
+                                <line x1="400" y1="220" x2="400" y2="50" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/>
+                                <text x="400" y="240" text-anchor="middle" font-size="12">K</text>
+
+                                <!-- Payoff line (Put) -->
+                                <line x1="80" y1="50" x2="400" y2="220" stroke="#e74c3c" stroke-width="3"/>
+                                <line x1="400" y1="220" x2="900" y2="220" stroke="#e74c3c" stroke-width="3"/>
+                                <circle cx="400" cy="220" r="4" fill="#e74c3c"/>
+
+                                <!-- Area under curve -->
+                                <polygon points="80,50 400,220 80,220" fill="#e74c3c" opacity="0.1"/>
+
+                                <!-- Cost line -->
+                                <line x1="80" y1="200" x2="900" y2="200" stroke="#3498db" stroke-width="2" stroke-dasharray="5,5"/>
+                                <text x="50" y="205" font-size="11" fill="#3498db">-C₀</text>
+                            </svg>
+
+                            <div style="text-align: left; background: #fce4ec; padding: 2rem; border-radius: 8px;">
+                                <p style="margin-bottom: 1rem;">
+                                    <strong style="color: var(--accent-put);">Ecuación:</strong><br/>
+                                    <code style="font-size: 1.1rem;">Payoff = max(K - S, 0) - C₀</code>
+                                </p>
+                                <p style="margin-bottom: 1rem;">
+                                    <strong style="color: var(--accent-put);">¿Qué significa?</strong><br/>
+                                    Si el precio <strong>S</strong> cae por debajo del strike <strong>K</strong>, ejerces el put y te proteges.
+                                </p>
+                                <p>
+                                    <strong style="color: var(--accent-put);">Break-even:</strong><br/>
+                                    S = K - C₀ (necesitas bajar más que el costo inicial)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Precio y Valoración</h2>
+                        <div style="margin-top: 2rem; max-width: 900px;">
+                            <p style="margin-bottom: 2rem;"><strong>¿Por qué una Chooser es más cara que opciones vainilla?</strong></p>
+
+                            <div style="text-align: left;">
+                                <div style="background: #f0f4ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent-call);">
+                                    <p><strong style="color: var(--accent-call);">Comparación con Call:</strong><br/>
+                                    Call puro: C(S, K, T)<br/>
+                                    <strong>Chooser es más cara</strong> porque incluye opción de cambiar a put.</p>
+                                </div>
+
+                                <div style="background: #fff3e0; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--accent-put);">
+                                    <p><strong style="color: var(--accent-put);">Comparación con Put:</strong><br/>
+                                    Put puro: P(S, K, T)<br/>
+                                    <strong>Chooser es más cara</strong> porque tienes más tiempo (esperas hasta τ).</p>
+                                </div>
+
+                                <p style="margin-bottom: 1.5rem; font-weight: bold;">Factores que afectan el precio:</p>
+                                <ul style="list-style-position: inside; line-height: 1.8;">
+                                    <li><strong>Volatilidad (σ):</strong> Mayor volatilidad = mayor valor (más posibilidades)</li>
+                                    <li><strong>Tiempo hasta decisión (τ):</strong> Mayor τ = mayor valor (más tiempo para esperar)</li>
+                                    <li><strong>Tiempo total (T):</strong> Mayor T = mayor valor (más oportunidad)</li>
+                                    <li><strong>Tasa de interés (r):</strong> Afecta el descuento del valor futuro</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Usos, Ventajas y Riesgos</h2>
+                        <div style="margin-top: 2rem; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; max-width: 1100px;">
+
+                            <!-- Casos de uso -->
+                            <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; border-top: 4px solid var(--primary);">
+                                <h3 style="font-size: 1.3rem; color: var(--primary); margin-bottom: 1rem;">📌 Casos de uso</h3>
+                                <ul style="font-size: 0.95rem; line-height: 1.7; list-style-position: inside;">
+                                    <li>Evento incierto próximo (resultados, decisión política)</li>
+                                    <li>Mercado muy volátil</li>
+                                    <li>Indeciso entre alza y baja</li>
+                                    <li>Necesitas flexibilidad táctica</li>
+                                </ul>
+                            </div>
+
+                            <!-- Ventajas -->
+                            <div style="background: #e8f5e9; padding: 1.5rem; border-radius: 8px; border-top: 4px solid var(--accent-call);">
+                                <h3 style="font-size: 1.3rem; color: var(--accent-call); margin-bottom: 1rem;">✓ Ventajas</h3>
+                                <ul style="font-size: 0.95rem; line-height: 1.7; list-style-position: inside;">
+                                    <li>Máxima flexibilidad</li>
+                                    <li>Aprovecha mejor la volatilidad</li>
+                                    <li>Decide con más información</li>
+                                    <li>Un solo pago hoy</li>
+                                </ul>
+                            </div>
+
+                            <!-- Riesgos -->
+                            <div style="background: #ffebee; padding: 1.5rem; border-radius: 8px; border-top: 4px solid var(--accent-put);">
+                                <h3 style="font-size: 1.3rem; color: var(--accent-put); margin-bottom: 1rem;">⚠ Riesgos</h3>
+                                <ul style="font-size: 0.95rem; line-height: 1.7; list-style-position: inside;">
+                                    <li>Más costosa que vanilla</li>
+                                    <li>Riesgo de pérdida total si no ejerces</li>
+                                    <li>Complejidad de valoración</li>
+                                    <li>Liquidez limitada OTC</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Caso Práctico: Decide ahora</h2>
+                        <div style="margin-top: 2rem; max-width: 1000px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+                                <!-- Gráfico -->
+                                <div>
+                                    <p style="font-weight: bold; margin-bottom: 0.5rem;">Histórico de precio (últimos 90 días)</p>
+                                    <svg width="100%" height="200" viewBox="0 0 300 200" style="background: #f8f9fa; border-radius: 8px;">
+                                        <!-- Línea de precio -->
+                                        <polyline points="10,150 30,130 50,140 70,110 90,90 110,100 130,80 150,70 170,85 190,60 210,75 230,65 250,40 270,55 290,35"
+                                                  fill="none" stroke="#003366" stroke-width="2"/>
+                                        <!-- Puntos -->
+                                        <circle cx="10" cy="150" r="2" fill="#003366"/>
+                                        <circle cx="290" cy="35" r="3" fill="#2ecc71" stroke="#fff" stroke-width="1"/>
+                                        <!-- Ejes -->
+                                        <line x1="10" y1="160" x2="290" y2="160" stroke="#ccc" stroke-width="1"/>
+                                        <line x1="10" y1="30" x2="10" y2="160" stroke="#ccc" stroke-width="1"/>
+                                        <text x="145" y="190" text-anchor="middle" font-size="12">Tiempo</text>
+                                        <text x="5" y="95" font-size="12">Precio</text>
+                                    </svg>
+                                </div>
+
+                                <!-- Datos -->
+                                <div style="text-align: left; background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
+                                    <p><strong>Empresa:</strong> TechCorp Inc.</p>
+                                    <p><strong>Precio actual (S):</strong> $95</p>
+                                    <p><strong>Strike (K):</strong> $100</p>
+                                    <p><strong>Volatilidad:</strong> 35% anual</p>
+                                    <p style="margin-top: 1rem; border-top: 1px solid #ddd; padding-top: 1rem;">
+                                        <strong>📅 Fechas importantes:</strong><br/>
+                                        Decisión (τ): 30 días<br/>
+                                        Vencimiento (T): 90 días
+                                    </p>
+                                    <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
+                                        <em>En 30 días, anunciarán resultados. Mucha incertidumbre ahora.</em>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 3rem; padding: 2rem; background: #fff3e0; border-radius: 8px; border-left: 4px solid var(--timer);">
+                                <p style="font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem; color: var(--primary);">
+                                    🕐 El tiempo para decidir está terminando...
+                                </p>
+                                <p style="margin-bottom: 2rem; font-size: 1.1rem;">
+                                    ¿Esperas que suba o que baje?<br/>
+                                    <strong>¿CALL o PUT?</strong>
+                                </p>
+                                <div class="button-group" style="margin: 0;">
+                                    <button class="btn btn-call" onclick="showOutcome('call')">
+                                        📈 Elegir CALL (espero alza)
+                                    </button>
+                                    <button class="btn btn-put" onclick="showOutcome('put')">
+                                        📉 Elegir PUT (espero baja)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                onShow: function() {
+                    window.outcomeChoice = null;
+                }
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2 id="outcomeTitle">Desenlace</h2>
+                        <div id="outcomeContent" style="margin-top: 3rem; max-width: 900px; text-align: left;"></div>
+                        <div style="margin-top: 3rem;">
+                            <button class="btn btn-back" onclick="previousSlide()">
+                                ← Volver a elegir
+                            </button>
+                        </div>
+                    </div>
+                `,
+                onShow: function() {
+                    if (!window.outcomeChoice) return;
+
+                    const container = document.getElementById('outcomeContent');
+                    const title = document.getElementById('outcomeTitle');
+
+                    if (window.outcomeChoice === 'call') {
+                        title.textContent = '✓ Elegiste: CALL (Alza)';
+                        container.innerHTML = `
+                            <div style="background: #e8f5e9; padding: 2rem; border-radius: 8px; border-left: 4px solid var(--accent-call);">
+                                <p><strong>Resultado del mercado:</strong></p>
+                                <p style="font-size: 1.3rem; color: var(--accent-call); margin: 1rem 0;">
+                                    🚀 El precio subió a <strong>$115</strong>
+                                </p>
+                                <p style="margin: 1.5rem 0;">
+                                    <strong>Tu payoff:</strong><br/>
+                                    max($115 - $100, 0) - C₀ = $15 - Costo inicial
+                                </p>
+                                <p style="margin: 1.5rem 0; font-size: 1.1rem; color: var(--accent-call);">
+                                    <strong>✓ ¡GANANCIA!</strong> Tu decisión fue correcta.
+                                </p>
+                                <p style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #ddd; font-style: italic;">
+                                    Pagaste por la flexibilidad de esperar 30 días y observar el mercado.
+                                    Fue la decisión correcta. La chooser te permitió elegir con mejor información.
+                                </p>
+                            </div>
+                        `;
+                    } else if (window.outcomeChoice === 'put') {
+                        title.textContent = '✓ Elegiste: PUT (Baja)';
+                        container.innerHTML = `
+                            <div style="background: #fce4ec; padding: 2rem; border-radius: 8px; border-left: 4px solid var(--accent-put);">
+                                <p><strong>Resultado del mercado:</strong></p>
+                                <p style="font-size: 1.3rem; color: var(--accent-put); margin: 1rem 0;">
+                                    📉 El precio bajó a <strong>$85</strong>
+                                </p>
+                                <p style="margin: 1.5rem 0;">
+                                    <strong>Tu payoff:</strong><br/>
+                                    max($100 - $85, 0) - C₀ = $15 - Costo inicial
+                                </p>
+                                <p style="margin: 1.5rem 0; font-size: 1.1rem; color: var(--accent-put);">
+                                    <strong>✓ ¡GANANCIA!</strong> Tu protección funcionó.
+                                </p>
+                                <p style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #ddd; font-style: italic;">
+                                    Pagaste por la flexibilidad de esperar 30 días y observar el mercado.
+                                    Fue la decisión correcta. La chooser te permitió elegir con mejor información.
+                                </p>
+                            </div>
+                        `;
+                    }
+                }
+            }
+        ];
+
+        function renderSlides() {
+            const wrapper = document.getElementById('slidesWrapper');
+            wrapper.innerHTML = '';
+
+            slidesConfig.forEach((slideConfig, index) => {
+                const slideDiv = document.createElement('div');
+                slideDiv.className = 'slide';
+                slideDiv.innerHTML = slideConfig.html;
+                if (index === 0) slideDiv.classList.add('active');
+                wrapper.appendChild(slideDiv);
+            });
+
+            slides = document.querySelectorAll('.slide');
+            document.getElementById('totalSlides').textContent = slides.length;
+            updateTimer();
+        }
+
+        function showSlide(index) {
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            currentSlideIndex = index;
+
+            document.getElementById('currentSlide').textContent = index + 1;
+            updateTimer();
+
+            // Ejecutar callback si existe
+            if (slidesConfig[index].onShow) {
+                slidesConfig[index].onShow();
+            }
+        }
+
+        function nextSlide() {
+            showSlide(currentSlideIndex + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlideIndex - 1);
+        }
+
+        function updateTimer() {
+            const timerContainer = document.getElementById('timerContainer');
+            const totalSlides = slides.length;
+            const progress = (currentSlideIndex + 1) / totalSlides;
+
+            // Calcular color según progreso
+            let fillColor = '#2ecc71'; // verde inicial
+            if (progress > 0.5) fillColor = '#f39c12'; // naranja medio
+            if (progress > 0.8) fillColor = '#e74c3c'; // rojo final
+
+            const svg = `
+                <svg width="80" height="80" viewBox="0 0 80 80">
+                    <!-- Círculo background -->
+                    <circle cx="40" cy="40" r="35" fill="none" stroke="#e0e0e0" stroke-width="2"/>
+
+                    <!-- Círculo progress -->
+                    <circle cx="40" cy="40" r="35" fill="none" stroke="${fillColor}"
+                            stroke-width="3" stroke-dasharray="${220 * progress} 220"
+                            stroke-linecap="round" transform="rotate(-90 40 40)"
+                            style="transition: stroke 0.3s, stroke-dasharray 0.3s;"/>
+
+                    <!-- Icono reloj -->
+                    <text x="40" y="48" font-size="24" text-anchor="middle" fill="${fillColor}"
+                          font-weight="bold" style="transition: fill 0.3s;">🕐</text>
+                </svg>
+            `;
+
+            timerContainer.innerHTML = svg;
+        }
+
+        function showOutcome(choice) {
+            window.outcomeChoice = choice;
+            nextSlide();
+        }
+
+        // Controles de teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+        });
+
+        // Inicializar presentación cuando está lista
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSlides();
+        });
+    </script>
+</body>
+</html>
