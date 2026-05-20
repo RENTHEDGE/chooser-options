@@ -315,6 +315,41 @@
                         </div>
                     </div>
                 `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Cómo funciona</h2>
+                        <div style="margin-top: 3rem; max-width: 1000px;">
+                            <svg width="100%" height="250" viewBox="0 0 1000 250" style="margin-bottom: 2rem;">
+                                <!-- Timeline line -->
+                                <line x1="50" y1="120" x2="950" y2="120" stroke="#003366" stroke-width="3"/>
+
+                                <!-- Punto 1: Hoy -->
+                                <circle cx="50" cy="120" r="15" fill="#2ecc71" stroke="#003366" stroke-width="2"/>
+                                <text x="50" y="170" text-anchor="middle" font-size="14" font-weight="bold">Hoy (t=0)</text>
+                                <text x="50" y="190" text-anchor="middle" font-size="12">Compras la opción</text>
+
+                                <!-- Punto 2: Decisión -->
+                                <circle cx="450" cy="120" r="15" fill="#e67e22" stroke="#003366" stroke-width="2"/>
+                                <text x="450" y="170" text-anchor="middle" font-size="14" font-weight="bold">Fecha decisión (t=τ)</text>
+                                <text x="450" y="190" text-anchor="middle" font-size="12">¿CALL o PUT?</text>
+
+                                <!-- Punto 3: Vencimiento -->
+                                <circle cx="950" cy="120" r="15" fill="#e74c3c" stroke="#003366" stroke-width="2"/>
+                                <text x="950" y="170" text-anchor="middle" font-size="14" font-weight="bold">Vencimiento (t=T)</text>
+                                <text x="950" y="190" text-anchor="middle" font-size="12">Ejerces o no</text>
+                            </svg>
+
+                            <div style="text-align: left; background: #f8f9fa; padding: 2rem; border-radius: 8px; margin-top: 2rem;">
+                                <p><strong style="color: var(--primary);">Paso 1:</strong> Compras la chooser hoy</p>
+                                <p><strong style="color: var(--primary);">Paso 2:</strong> En fecha τ (decisión), observas el mercado</p>
+                                <p><strong style="color: var(--primary);">Paso 3:</strong> Eliges si la opción será CALL o PUT</p>
+                                <p><strong style="color: var(--primary);">Paso 4:</strong> En vencimiento T, la ejerces si es rentable</p>
+                            </div>
+                        </div>
+                    </div>
+                `
             }
         ];
 
