@@ -434,6 +434,35 @@
                         </div>
                     </div>
                 `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Componente 3: Ajuste por el tiempo de espera</h2>
+                        <div style="margin-top: 3rem; max-width: 900px;">
+                            <div style="background: #f3e5f5; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; border-left: 5px solid var(--timer);">
+                                <code style="font-size: 1.3rem; color: var(--timer); font-weight: bold;">
+                                    -P(S, K, τ)
+                                </code>
+                            </div>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--timer);">¿Qué representa?</strong><br/>
+                                Un put que expira en la fecha de decisión τ. Se <strong>resta</strong> porque es un costo.
+                            </p>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--timer);">¿Por qué aparece?</strong><br/>
+                                Si en τ el mercado cae, podrías comprar un put simple y ejercerlo inmediatamente. Restamos su valor porque es una alternativa más barata.
+                            </p>
+                            <p style="text-align: left; margin-bottom: 1.5rem;">
+                                <strong style="color: var(--timer);">Intuición:</strong><br/>
+                                "<em>Descuento por no esperar: si decidiste bajar en τ, podrías hacer algo más simple.</em>"
+                            </p>
+                            <div style="background: #fff3e0; padding: 1rem; border-radius: 6px; margin-top: 2rem; font-size: 0.95rem;">
+                                <strong>Efecto neto:</strong> La chooser es más cara que un put simple porque pagas por la flexibilidad de decidir.
+                            </div>
+                        </div>
+                    </div>
+                `
             }
         ];
 
