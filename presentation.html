@@ -548,6 +548,55 @@
                         </div>
                     </div>
                 `
+            },
+            {
+                html: `
+                    <div class="slide-content">
+                        <h2>Payoff si elegiste PUT</h2>
+                        <div style="margin-top: 3rem; max-width: 1000px;">
+                            <svg width="100%" height="280" viewBox="0 0 1000 280" style="margin-bottom: 2rem;">
+                                <!-- Axes -->
+                                <line x1="80" y1="220" x2="900" y2="220" stroke="#333" stroke-width="2"/>
+                                <line x1="80" y1="50" x2="80" y2="220" stroke="#333" stroke-width="2"/>
+
+                                <!-- Labels -->
+                                <text x="950" y="225" font-size="14" font-weight="bold">Precio (S)</text>
+                                <text x="60" y="30" font-size="14" font-weight="bold">Payoff</text>
+
+                                <!-- Strike line -->
+                                <line x1="400" y1="220" x2="400" y2="50" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/>
+                                <text x="400" y="240" text-anchor="middle" font-size="12">K</text>
+
+                                <!-- Payoff line (Put) -->
+                                <line x1="80" y1="50" x2="400" y2="220" stroke="#e74c3c" stroke-width="3"/>
+                                <line x1="400" y1="220" x2="900" y2="220" stroke="#e74c3c" stroke-width="3"/>
+                                <circle cx="400" cy="220" r="4" fill="#e74c3c"/>
+
+                                <!-- Area under curve -->
+                                <polygon points="80,50 400,220 80,220" fill="#e74c3c" opacity="0.1"/>
+
+                                <!-- Cost line -->
+                                <line x1="80" y1="200" x2="900" y2="200" stroke="#3498db" stroke-width="2" stroke-dasharray="5,5"/>
+                                <text x="50" y="205" font-size="11" fill="#3498db">-C₀</text>
+                            </svg>
+
+                            <div style="text-align: left; background: #fce4ec; padding: 2rem; border-radius: 8px;">
+                                <p style="margin-bottom: 1rem;">
+                                    <strong style="color: var(--accent-put);">Ecuación:</strong><br/>
+                                    <code style="font-size: 1.1rem;">Payoff = max(K - S, 0) - C₀</code>
+                                </p>
+                                <p style="margin-bottom: 1rem;">
+                                    <strong style="color: var(--accent-put);">¿Qué significa?</strong><br/>
+                                    Si el precio <strong>S</strong> cae por debajo del strike <strong>K</strong>, ejerces el put y te proteges.
+                                </p>
+                                <p>
+                                    <strong style="color: var(--accent-put);">Break-even:</strong><br/>
+                                    S = K - C₀ (necesitas bajar más que el costo inicial)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `
             }
         ];
 
